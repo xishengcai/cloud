@@ -11,6 +11,8 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/pkg/errors"
+
 	"github.com/gocraft/work"
 	ssh2 "golang.org/x/crypto/ssh"
 	"k8s.io/klog"
@@ -85,25 +87,26 @@ func (i InstallKuber) Install() error {
 func (i *InstallKuber) install() error {
 	client, err := ssh.GetClient(i.PrimaryMaster)
 	if err != nil {
+		klog.Error(err)
 		return err
 	}
 	err = docker.InstallDocker(i.PrimaryMaster)
 	if err != nil {
 		klog.Errorf("install docker failed: %v", err)
-		return fmt.Errorf("install docker failed: %v", err)
+		return errors.Wrap(err, "install docker")
 	}
 
 	err = i.installMaster(i.PrimaryMaster)
 	if err != nil {
 		klog.Errorf("install master failed: %v", err)
-		return fmt.Errorf("install master failed: %v", err)
+		return errors.Wrap(err, "install master")
 	}
 
 	// get joinMaster cmd
 	i.JoinMasterCommand, err = getJoinMasterCommand(client)
 	if err != nil {
 		klog.Errorf("getJoinMasterCommand failed: %v", err)
-		return fmt.Errorf("getJoinMasterCommand failed: %v", err)
+		return errors.Wrap(err, "getJoinMasterCommand failed")
 	}
 
 	klog.Infof("joinMasterCommand: %s", i.JoinMasterCommand)

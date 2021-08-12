@@ -2,8 +2,20 @@
 
 set -e
 
+cilimumTar=https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz
+
+checkNet(){
+  # -c: 表示次数，1 为1次
+  # -w: 表示deadline, time out的时间，单位为秒，100为100秒。
+  ping -c 1 -w 3 www.google.com
+  if [[ $? != 0 ]];then
+    echo "in inter"
+    cilimumTar=https://soft-package-xisheng.oss-cn-hangzhou.aliyuncs.com/k8s/cilium/v0.8.4/cilium-linux-amd64.tar.gz
+  fi
+}
+
 download(){
-  curl -LO https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz
+  curl -LO $cilimumTar
   sudo tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin
   rm -rf cilium-linux-amd64.tar.gz
 }
@@ -33,6 +45,7 @@ downloadHubbleClient(){
 }
 
 main(){
+  checkNet
   download
   installCilium
 #  enableHubble

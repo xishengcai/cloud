@@ -3,7 +3,7 @@ echo "clean env"
 yum remove -y docker docker-common container-selinux docker-selinux docker-engine
 rm -rf /var/lib/docker
 
-echo "install docker 18.09.8"
+echo "install docker 19.04.14"
 yum install -y yum-utils
 
 yum-config-manager \
@@ -13,7 +13,7 @@ yum-config-manager \
 yum clean packages
 #查看docker-ce版本并且安装
 yum list docker-ce --showduplicates | sort -r  
-yum install -y docker-ce-19.03.14  docker-ce-cli containerd.io
+yum install -y docker-ce-cli-19.03.14 docker-ce-19.03.14 containerd.io
 
 
 echo "config docker daemon"

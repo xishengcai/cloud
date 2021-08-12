@@ -45,7 +45,7 @@ var doc = `{
                 "tags": [
                     "install kubernetes master"
                 ],
-                "summary": "install kubernets",
+                "summary": "install kubernetes",
                 "parameters": [
                     {
                         "description": "install kubernetes master",
@@ -53,7 +53,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.InstallKubernetesParameter"
+                            "$ref": "#/definitions/models.Kubernetes"
                         }
                     }
                 ],
@@ -79,7 +79,7 @@ var doc = `{
                 "tags": [
                     "install kubernetes slave"
                 ],
-                "summary": "install kubernets slave",
+                "summary": "install kubernetes slave",
                 "parameters": [
                     {
                         "description": "install kubernetes slave",
@@ -87,7 +87,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.InstallSlaveParam"
+                            "$ref": "#/definitions/models.KubernetesSlave"
                         }
                     }
                 ],
@@ -110,11 +110,9 @@ var doc = `{
                     "type": "object"
                 },
                 "resMsg": {
-                    "description": "根据Accept-Language指定 语言类型，返回详细错误信息中英文，或success",
                     "type": "object"
                 },
                 "status": {
-                    "description": "0 或 对应事件错误码",
                     "type": "integer"
                 }
             }
@@ -142,7 +140,7 @@ var doc = `{
                 }
             }
         },
-        "models.InstallKubernetesParameter": {
+        "models.Kubernetes": {
             "type": "object",
             "required": [
                 "clusterName",
@@ -184,12 +182,15 @@ var doc = `{
                 "serviceCidr": {
                     "type": "string"
                 },
+                "uid": {
+                    "type": "string"
+                },
                 "version": {
                     "type": "string"
                 }
             }
         },
-        "models.InstallSlaveParam": {
+        "models.KubernetesSlave": {
             "type": "object",
             "properties": {
                 "joinSlaveCommand": {

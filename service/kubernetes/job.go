@@ -2,6 +2,8 @@ package kubernetes
 
 import (
 	"encoding/json"
+	"os"
+	"os/signal"
 
 	"github.com/gocraft/work"
 	"github.com/gomodule/redigo/redis"
@@ -61,11 +63,11 @@ func registerJob(namespace, jobName string, j job) {
 	pool.Start()
 
 	klog.Info("register job ", jobName)
-	// Wait for a signal to quit:
-	//signalChan := make(chan os.Signal, 1)
-	//signal.Notify(signalChan, os.Interrupt, os.Kill)
-	//<-signalChan
+
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, os.Interrupt, os.Kill)
+	<-signalChan
 
 	// Stop the pool
-	//pool.Stop()
+	pool.Stop()
 }

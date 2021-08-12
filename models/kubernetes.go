@@ -1,8 +1,9 @@
 package models
 
+// Kubernetes master nodes
 type Kubernetes struct {
-	ID                   int    `form:"id"`
-	Uid                  string `form:"uid"`
+	ID                   int    `form:"-"`
+	Uid                  string `form:"-"`
 	ClusterName          string `form:"clusterName" binding:"required"`
 	PrimaryMaster        Host   `form:"primaryMaster" binding:"required"`
 	BackendMasters       []Host `form:"backendMasters"`
@@ -15,6 +16,7 @@ type Kubernetes struct {
 	JoinMasterCommand    string `json:"joinMasterCommand"`
 }
 
+// KubernetesSlave k8s slave node
 type KubernetesSlave struct {
 	Version          string `form:"version"`
 	Nodes            []Host `form:"nodes"`
@@ -22,6 +24,7 @@ type KubernetesSlave struct {
 	JoinSlaveCommand string `form:"joinSlaveCommand"`
 }
 
+// Version kubernetes version
 type Version struct {
 	Version string `form:"version,default=1.17.2"`
 }

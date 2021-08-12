@@ -10,12 +10,12 @@ import (
 )
 
 // InstallKubernetes godoc
-// @Summary install kubernets
+// @Summary install kubernetes
 // @Description install kubernetes master
 // @Tags install kubernetes master
 // @Accept  json
 // @Produce  json
-// @Param cluster body models.InstallKubernetesParameter true "install kubernetes master"
+// @Param cluster body models.Kubernetes true "install kubernetes master"
 // @Failure 201 {object} app.Response
 // @Router /kubernetes/v1/masters [post]
 func InstallKubernetes(ctx *gin.Context) {
@@ -35,7 +35,7 @@ func InstallKubernetes(ctx *gin.Context) {
 // @Tags install kubernetes slave
 // @Accept  json
 // @Produce  json
-// @Param cluster body models.InstallSlaveParam true "install kubernetes slave"
+// @Param cluster body models.KubernetesSlave true "install kubernetes slave"
 // @Failure 201 {object} app.Response
 // @Router /kubernetes/v1/slaves [post]
 func InstallKubernetesSlave(ctx *gin.Context) {

@@ -6,7 +6,9 @@ import (
 	"net"
 	"time"
 
-	"k8s.io/klog"
+	"github.com/pkg/errors"
+
+	"k8s.io/klog/v2"
 
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
@@ -49,7 +51,9 @@ func CopyByteToRemote(client *ssh.Client, byteStream []byte, remoteFilePath stri
 	defer func() {
 		_ = sftpClient.Close()
 	}()
-	dstFile, err := sftpClient.Create(remoteFilePath) //创建文件夹
+
+	// create directory
+	dstFile, err := sftpClient.Create(remoteFilePath)
 	if err != nil {
 		return err
 	}
@@ -66,15 +70,14 @@ func CopyByteToRemote(client *ssh.Client, byteStream []byte, remoteFilePath stri
 
 // GetClient 通过ssh.ClientConfig创建一个ssh连接
 func GetClient(host models.Host) (*ssh.Client, error) {
-	klog.Infof("host:%s, user:%s, password:%s, port:%d",
-		host.IP, host.User, host.Password, host.Port)
+	klog.InfoS("host message", "host", host, "user", host.User, "password", host.Password, "port", host.Port)
 	addr := fmt.Sprintf("%s:%d", host.IP, host.Port)
 	sshConfig := getConfigByPassword(host.User, host.Password, time.Second*5)
 	client, err := ssh.Dial("tcp", addr, sshConfig)
 	if err != nil {
-		return nil, fmt.Errorf("failed to dial:%v", err)
+		return nil, errors.Wrap(err, "dial to host")
 	} else if client == nil {
-		return nil, fmt.Errorf("get ssh client failed, %v", err)
+		return nil, errors.Wrap(err, "get ssh client")
 	}
 	return client, nil
 }

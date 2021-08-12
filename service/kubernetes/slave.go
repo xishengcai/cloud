@@ -124,7 +124,7 @@ func (i *InstallSlave) joinNodes() (err error) {
 			errorList = append(errorList, err)
 		}
 	}
-	//return fmt.Error(errors.NewAggregate(errorList).Error())
+	// return fmt.Error(errors.NewAggregate(errorList).Error())
 	return e.MergeError(errorList)
 }
 

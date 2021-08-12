@@ -5,10 +5,8 @@ definitions:
       data:
         type: object
       resMsg:
-        description: 根据Accept-Language指定 语言类型，返回详细错误信息中英文，或success
         type: object
       status:
-        description: 0 或 对应事件错误码
         type: integer
     type: object
   models.Host:
@@ -27,7 +25,7 @@ definitions:
     - port
     - user
     type: object
-  models.InstallKubernetesParameter:
+  models.Kubernetes:
     properties:
       backendMasters:
         items:
@@ -52,6 +50,8 @@ definitions:
         type: string
       serviceCidr:
         type: string
+      uid:
+        type: string
       version:
         type: string
     required:
@@ -59,7 +59,7 @@ definitions:
     - controlPlaneEndpoint
     - primaryMaster
     type: object
-  models.InstallSlaveParam:
+  models.KubernetesSlave:
     properties:
       joinSlaveCommand:
         type: string
@@ -98,7 +98,7 @@ paths:
         name: cluster
         required: true
         schema:
-          $ref: '#/definitions/models.InstallKubernetesParameter'
+          $ref: '#/definitions/models.Kubernetes'
       produces:
       - application/json
       responses:
@@ -106,7 +106,7 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/app.Response'
-      summary: install kubernets
+      summary: install kubernetes
       tags:
       - install kubernetes master
   /kubernetes/v1/slaves:
@@ -120,7 +120,7 @@ paths:
         name: cluster
         required: true
         schema:
-          $ref: '#/definitions/models.InstallSlaveParam'
+          $ref: '#/definitions/models.KubernetesSlave'
       produces:
       - application/json
       responses:
@@ -128,7 +128,7 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/app.Response'
-      summary: install kubernets slave
+      summary: install kubernetes slave
       tags:
       - install kubernetes slave
 securityDefinitions:
