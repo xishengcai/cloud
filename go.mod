@@ -12,7 +12,7 @@ require (
 	github.com/alibabacloud-go/tea-console v1.0.0
 	github.com/alibabacloud-go/tea-utils v1.3.9
 	github.com/braintree/manners v0.0.0-20160418043613-82a8879fc5fd // indirect
-	github.com/gin-gonic/gin v1.6.3
+	github.com/gin-gonic/gin v1.7.0
 	github.com/gocraft/web v0.0.0-20190207150652-9707327fb69b // indirect
 	github.com/gocraft/work v0.5.1
 	github.com/gomodule/redigo v1.8.4
