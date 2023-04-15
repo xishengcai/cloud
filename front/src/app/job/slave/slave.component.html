@@ -1,0 +1,41 @@
+<div class="container">
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="master" id="master">master</label>
+      <div formGroupName="master">
+        <label for="master.ip">ip</label>
+        <input type="text"  class="form-control"  required id="master.ip" formControlName="ip">
+        <label for="master.port">port</label>
+        <input type="text"  class="form-control"  required  id="master.port" formControlName="port">
+        <label for="master.user">user</label>
+        <input type="text"  class="form-control" required  id="master.user" formControlName="user">
+        <label for="master.password">password</label>
+        <input type="text"  class="form-control" required  id="master.password" formControlName="password">
+      </div>
+    </div>
+
+    <div >
+      <button class="btn btn-primary" (click)="addSlaveItem()"><span>Add Nodes</span></button>
+    </div>
+    <div formArrayName="slaves" class="form-group">
+      <div  *ngFor="let slave of slaves.controls; let i = index">
+        <div formGroupName={{i}}>
+          <label>---node {{i}}---</label><br>
+          <label for="master.ip">ip</label>
+          <input type="text"  class="form-control"  required id="i.ip" formControlName="ip">
+          <label for="master.port">port</label>
+          <input type="text"  class="form-control"  required  id="i.port" formControlName="port">
+          <label for="master.user">user</label>
+          <input type="text"  class="form-control" required  id="i.user" formControlName="user">
+          <label for="master.password">password</label>
+          <input type="text"  class="form-control" required  id="i.password" formControlName="password">
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-dark">submit</button>
+
+  </form>
+
+</div>
+
+

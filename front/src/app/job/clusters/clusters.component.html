@@ -1,0 +1,64 @@
+<div class="container">
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input class="form-control" id="name" required formControlName="name">
+    </div>
+
+    <div class="form-group">
+      <label for="controlPlaneEndpoint">ControlPlaneEndpoint</label>
+      <input type="text" class="form-control" id="controlPlaneEndpoint"
+             required ng-valid
+             name="controlPlaneEndpoint" placeholder="控制面IP地址或域名"
+             formControlName="controlPlaneEndpoint">
+    </div>
+
+    <div class="form-group">
+
+      <label>registry</label>
+      <select class="form-control" formControlName="registry" required>
+        <option *ngFor="let registry of registries" >{{registry}}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label >NetWorkPlug</label>
+      <select class="form-control" formControlName="netWorkPlug"  required>
+        <option *ngFor="let netWorkPlug of netWorkPlugs">{{netWorkPlug}}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="podCidr">podCidr</label>
+      <input type="text"  class="form-control"  id="podCidr" formControlName="podCidr">
+    </div>
+
+    <div class="form-group">
+      <label for="serviceCidr">ServiceCidr</label>
+      <input type="text"  class="form-control"  id="serviceCidr" formControlName="serviceCidr">
+    </div>
+
+    <div class="form-group">
+      <label for="version">Version</label>
+      <input class="form-control"  id="version" value="1.17.11" formControlName="version">
+    </div>
+
+
+    <div class="form-group">
+      <label for="primaryMaster" id="primaryMaster">primaryMaster</label>
+      <div formGroupName="primaryMaster">
+        <label for="ip">ip</label>
+        <input type="text"  class="form-control"  required id="ip" formControlName="ip">
+        <label for="port">port</label>
+        <input type="text"  class="form-control"  required  id="port" formControlName="port">
+        <label for="user">user</label>
+        <input type="text"  class="form-control" required  id="user" formControlName="user">
+        <label for="password">password</label>
+        <input type="text"  class="form-control" required  id="password" formControlName="password">
+      </div>
+    </div>
+    <button type="submit" class="btn btn-dark">submit</button>
+
+  </form>
+
+</div>

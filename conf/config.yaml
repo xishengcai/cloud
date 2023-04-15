@@ -1,0 +1,10 @@
+title: cloud
+releaseEnv: local
+version: "1.0"
+server:
+  local:
+    cloud:
+      port: 8080
+      readTimeout:  60
+      writeTimeout: 60
+      runMode: debug

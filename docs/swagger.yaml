@@ -1,0 +1,200 @@
+basePath: /api
+definitions:
+  app.Response:
+    properties:
+      data:
+        type: object
+      eventCode:
+        type: integer
+      resMsg:
+        type: object
+    type: object
+  cluster.InstallSlave:
+    properties:
+      dryRun:
+        type: boolean
+      master:
+        $ref: '#/definitions/models.Host'
+        type: object
+      nodes:
+        items:
+          $ref: '#/definitions/models.Host'
+        type: array
+      version:
+        type: string
+    required:
+    - master
+    - nodes
+    - version
+    type: object
+  kubernetes.Upgrade:
+    properties:
+      dryRun:
+        type: boolean
+      nodes:
+        items:
+          $ref: '#/definitions/models.Host'
+        type: array
+      version:
+        type: string
+    type: object
+  models.Host:
+    properties:
+      ip:
+        type: string
+      password:
+        type: string
+      port:
+        type: integer
+      user:
+        type: string
+    type: object
+  models.Kubernetes:
+    properties:
+      backendMasters:
+        items:
+          $ref: '#/definitions/models.Host'
+        type: array
+      controlPlaneEndpoint:
+        type: string
+      joinMasterCommand:
+        type: string
+      name:
+        type: string
+      networkPlug:
+        type: string
+      podCidr:
+        type: string
+      primaryMaster:
+        $ref: '#/definitions/models.Host'
+        type: object
+      registry:
+        description: registry.aliyuncs.com/google_containers， k8s.gcr.io
+        type: string
+      serviceCidr:
+        type: string
+      version:
+        type: string
+    required:
+    - controlPlaneEndpoint
+    - name
+    - primaryMaster
+    type: object
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "2.0"
+paths:
+  /v1/cluster/masters:
+    post:
+      consumes:
+      - application/json
+      description: install cluster master
+      parameters:
+      - description: install cluster master
+        in: body
+        name: cluster
+        required: true
+        schema:
+          $ref: '#/definitions/models.Kubernetes'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: install cluster
+      tags:
+      - install cluster master
+  /v1/cluster/slaves:
+    post:
+      consumes:
+      - application/json
+      description: install cluster slave
+      parameters:
+      - description: install cluster slave
+        in: body
+        name: cluster
+        required: true
+        schema:
+          $ref: '#/definitions/cluster.InstallSlave'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: install cluster slave
+      tags:
+      - install cluster slave
+  /v1/cluster/upgrade:
+    post:
+      consumes:
+      - application/json
+      description: install cluster slave
+      parameters:
+      - description: k8s all nodes
+        in: body
+        name: upgrade
+        required: true
+        schema:
+          $ref: '#/definitions/kubernetes.Upgrade'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: upgrade k8s
+      tags:
+      - upgrade
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+  BasicAuth:
+    type: basic
+  OAuth2AccessCode:
+    authorizationUrl: https://example.com/oauth/authorize
+    flow: accessCode
+    scopes:
+      admin: ' Grants read and write access to administrative information'
+    tokenUrl: https://example.com/oauth/token
+    type: oauth2
+  OAuth2Application:
+    flow: application
+    scopes:
+      admin: ' Grants read and write access to administrative information'
+      write: ' Grants write access'
+    tokenUrl: https://example.com/oauth/token
+    type: oauth2
+  OAuth2Implicit:
+    authorizationUrl: https://example.com/oauth/authorize
+    flow: implicit
+    scopes:
+      admin: ' Grants read and write access to administrative information'
+      write: ' Grants write access'
+    type: oauth2
+  OAuth2Password:
+    flow: password
+    scopes:
+      admin: ' Grants read and write access to administrative information'
+      read: ' Grants read access'
+      write: ' Grants write access'
+    tokenUrl: https://example.com/oauth/token
+    type: oauth2
+swagger: "2.0"
+x-extension-openapi:
+  example: value on a json format
