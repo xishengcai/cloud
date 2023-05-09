@@ -44,6 +44,10 @@ networking:
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
 mode: ipvs
+---
+kind: KubeletConfiguration
+apiVersion: kubelet.config.k8s.io/v1beta1
+cgroupDriver: systemd
 #---
 #apiVersion: kubelet.config.k8s.io/v1beta1
 #kind: KubeletConfiguration

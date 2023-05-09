@@ -58,12 +58,8 @@ downloadCilium(){
 installCilium(){
   helm repo add cilium https://helm.cilium.io/
   helm repo update
-  helm upgrade -i cilium cilium/cilium --version 1.11.5 \
-  --namespace kube-system \
-  --set hubble.relay.enabled=true \
-  --set hubble.ui.enabled=true
-#  --set bgp.enable=true \
-#  --set bgp.announce.podCIDR=true
+  helm install cilium cilium/cilium --version 1.13.2 \
+  --namespace kube-system
 }
 
 setBgpConfigMap(){

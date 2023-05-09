@@ -76,7 +76,6 @@
     - [x] 1.21.x --> 1.22.x 升级 
   
 ## local start
-- docker run -d -p 6379:6379 redis
 - go run main.go
 - cd front && ng serve --open
 
