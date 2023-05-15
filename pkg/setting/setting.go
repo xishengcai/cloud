@@ -2,7 +2,6 @@ package setting
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"time"
 
@@ -16,7 +15,8 @@ import (
 var (
 	configFilePaths = [3]string{"conf/config.yaml", "../conf/config.yaml", "../../conf/config.yaml"}
 	EnvConfig       *envConfig
-	Cloud           *cloud
+	AliCloud        aliCloud
+	Web             web
 )
 
 type envConfig struct {
@@ -28,14 +28,29 @@ type envConfig struct {
 }
 
 type ServerConfig struct {
-	Cloud cloud `yaml:"cloud"`
+	Web      web      `yaml:"web"`
+	AliCloud aliCloud `yaml:"aliCloud"`
 }
 
-type cloud struct {
+type web struct {
 	Port         string        `yaml:"port"`
 	ReadTimeout  time.Duration `yaml:"readTimeout"`
 	WriteTimeout time.Duration `yaml:"writeTimeout"`
 	RunMode      string        `yaml:"runMode"`
+}
+
+type aliCloud struct {
+	AK  string `yaml:"ak"`
+	SK  string `yaml:"sk"`
+	OSS oss    `yaml:"oss"`
+}
+
+type oss struct {
+	AK       string `yaml:"ak"`
+	SK       string `yaml:"sk"`
+	Bucket   string `yaml:"bucket"`
+	Endpoint string `yaml:"endpoint"`
+	Domain   string `yaml:"domain"`
 }
 
 func init() {
@@ -68,7 +83,7 @@ func loadConfig(path string) {
 }
 
 func loadConfigWithPath(configPath string) {
-	config, err := ioutil.ReadFile(configPath)
+	config, err := os.ReadFile(configPath)
 	if err != nil {
 		klog.Error("read config file err: ", err)
 		panic(err)
@@ -82,6 +97,7 @@ func loadConfigWithPath(configPath string) {
 
 	releaseEnv := EnvConfig.ReleaseEnv
 	serverConfig := EnvConfig.Server[releaseEnv]
-	Cloud = &serverConfig.Cloud
+	Web = serverConfig.Web
+	AliCloud = serverConfig.AliCloud
 	klog.Infof("config: %+v", common.PrettifyJson(EnvConfig.Server[releaseEnv], true))
 }

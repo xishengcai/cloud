@@ -3,8 +3,17 @@ releaseEnv: local
 version: "1.0"
 server:
   local:
-    cloud:
+    web:
       port: 8080
       readTimeout:  60
       writeTimeout: 60
       runMode: debug
+    aliCloud:
+      ak: LTAI5tBdRQogZvUoS3BQwQ66
+      sk: OuXxoUYPDoeEwW8MPbSuwhBL4jUf3N
+      zone:
+      oss:
+        bucket: soft-package-xisheng
+        endpoint: oss-cn-hangzhou.aliyuncs.com
+        ak: LTAI5tBdRQogZvUoS3BQwQ66
+        sk: OuXxoUYPDoeEwW8MPbSuwhBL4jUf3N

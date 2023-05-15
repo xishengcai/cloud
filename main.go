@@ -61,10 +61,10 @@ func main() {
 
 	handler := routers.InitRouter()
 	server := &http.Server{
-		Addr:           fmt.Sprintf(":%s", setting.Cloud.Port),
+		Addr:           fmt.Sprintf(":%s", setting.Web.Port),
 		Handler:        handler,
-		ReadTimeout:    setting.Cloud.ReadTimeout * time.Second,
-		WriteTimeout:   setting.Cloud.WriteTimeout * time.Second,
+		ReadTimeout:    setting.Web.ReadTimeout * time.Second,
+		WriteTimeout:   setting.Web.WriteTimeout * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 	if err := server.ListenAndServe(); err != nil {

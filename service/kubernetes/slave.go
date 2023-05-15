@@ -23,20 +23,20 @@ type InstallSlave struct {
 }
 
 // Run install slave by master config [hostIP, port root, password]
-func (i InstallSlave) Run() app.ResultRaw {
+func (i *InstallSlave) Run() app.ResultRaw {
 	jobChan <- i
 	klog.Infof("enqueue job: %v", i)
-	return app.NewServiceResult(nil)
+	return app.NewServiceResult(nil, nil)
 
 }
 
-func (i InstallSlave) startJob() {
+func (i *InstallSlave) startJob() {
 	err := i.joinNodes()
 	if err != nil {
 		klog.Error(err)
 	}
 }
-func (i InstallSlave) Validate() error {
+func (i *InstallSlave) Validate() error {
 	return nil
 }
 
@@ -49,7 +49,7 @@ func handCommandResult(result []byte) string {
 	return command
 }
 
-func (i InstallSlave) getVersion(host models.Host) error {
+func (i *InstallSlave) getVersion(host models.Host) error {
 	client, err := ssh.GetClient(host)
 	if err != nil {
 		return err
@@ -69,7 +69,7 @@ func (i InstallSlave) getVersion(host models.Host) error {
 	return nil
 }
 
-func (i InstallSlave) setJoinCommand() error {
+func (i *InstallSlave) setJoinCommand() error {
 	joinCommand, err := getJoinNodeCommand(i.Master)
 	if err != nil {
 		return err
@@ -80,7 +80,7 @@ func (i InstallSlave) setJoinCommand() error {
 	return nil
 }
 
-func (i InstallSlave) joinNodes() (err error) {
+func (i *InstallSlave) joinNodes() (err error) {
 	var errorList []error
 
 	// wait until
@@ -121,7 +121,7 @@ func joinNode(host models.Host, version, joinCmd string, dryRun bool) (err error
 	if dryRun {
 		return nil
 	}
-
+	klog.Info("join cmd: ", joinCmd)
 	commands := []string{
 		fmt.Sprintf(`sh %s`, targetFile(installKubeletTpl)),
 		joinCmd,

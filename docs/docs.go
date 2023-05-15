@@ -134,6 +134,40 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/v1/images/pull": {
+            "post": {
+                "description": "image push to oss",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "image"
+                ],
+                "summary": "image push to oss",
+                "parameters": [
+                    {
+                        "description": "pull Image, then push to OSS",
+                        "name": "cluster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/images.Pull"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -153,11 +187,6 @@ var doc = `{
         },
         "cluster.InstallSlave": {
             "type": "object",
-            "required": [
-                "master",
-                "nodes",
-                "version"
-            ],
             "properties": {
                 "dryRun": {
                     "type": "boolean"
@@ -173,6 +202,49 @@ var doc = `{
                     }
                 },
                 "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "images.Image": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "images.Pull": {
+            "type": "object",
+            "properties": {
+                "source": {
+                    "type": "object",
+                    "$ref": "#/definitions/images.Repo"
+                }
+            }
+        },
+        "images.Repo": {
+            "type": "object",
+            "properties": {
+                "addr": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/images.Image"
+                    }
+                },
+                "org": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "user": {
                     "type": "string"
                 }
             }
@@ -255,6 +327,9 @@ var doc = `{
                     "type": "string"
                 }
             }
+        },
+        "ossutil.AliOssHelper": {
+            "type": "object"
         }
     },
     "securityDefinitions": {

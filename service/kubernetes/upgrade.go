@@ -23,7 +23,7 @@ func (u Upgrade) Validate() error {
 
 func (u Upgrade) Run() app.ResultRaw {
 	jobChan <- u
-	return app.NewServiceResult(nil)
+	return app.NewServiceResult(nil, nil)
 }
 
 func (u Upgrade) startJob() {

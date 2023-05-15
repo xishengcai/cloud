@@ -77,4 +77,4 @@ else
   mv linux-amd64/helm /usr/local/bin/
 fi
 
-#kubectl taint  nodes --all node-role.kubernetes.io/master-
+kubectl taint  nodes --all node-role.kubernetes.io/master-

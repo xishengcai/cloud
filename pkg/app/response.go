@@ -30,9 +30,10 @@ type ServiceResult struct {
 	err  error
 }
 
-func NewServiceResult(err error) *ServiceResult {
+func NewServiceResult(data interface{}, err error) *ServiceResult {
 	return &ServiceResult{
-		err: err,
+		data: data,
+		err:  err,
 	}
 }
 

@@ -58,6 +58,25 @@
 }
 ```
 
+### pull image and push to oss
+```json
+{
+  "source": {
+    "addr": "registry.cn-hangzhou.aliyuncs.com",
+    "images": [
+      {
+        "name": "openjdk",
+        "version": "latest"
+      }
+    ],
+    "org": "launcher",
+    "password": "",
+    "user": ""
+  }
+}
+
+```
+
 ## feature:
 - [x] support centos version
     - [x]  CentOS Linux 7 (Core)   3.10.0-957.el7.x86_64
@@ -78,5 +97,14 @@
 ## local start
 - go run main.go
 - cd front && ng serve --open
+- docker run 
+```bash
 
+docker run -d -p 8080:8080 -v /user/bin/docker:/user/bin/docker \
+-v /etc/docker:/etc/docker \
+-v /data/docker:/data/docker \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v /opt/image_ftp:/opt/image_ftp \
+registry.cn-hangzhou.aliyuncs.com/xisheng/cloud:release-V1
+```
 ![img.png](img.png)

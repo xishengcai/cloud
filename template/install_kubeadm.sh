@@ -70,6 +70,3 @@ kubeadm reset --force
 ## 关闭防火墙
 systemctl disable firewalld
 systemctl stop firewalld
-
-# 修改 cgroupDriver
-#在文件 /var/lib/kubelet/config.yaml 中添加设置 cgroupDriver: systemd

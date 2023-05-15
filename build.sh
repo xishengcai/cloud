@@ -7,7 +7,7 @@ IMAGE_NAME="cloud"
 VERSION="release-V1"
 REGISTRY="registry.cn-hangzhou.aliyuncs.com/xisheng"
 
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o  ./bin/cloud./main.go
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./bin/cloud ./main.go
 
 if [ $? -ne 0 ]; then
     echo "build ERROR"
@@ -25,6 +25,7 @@ COPY ./bin/cloud /usr/local/bin
 COPY ./conf  /opt/conf
 COPY ./template /opt/template
 COPY ./docs /opt/docs
+COPY ./image_ftp /opt/image_ftp
 
 RUN chmod +x /usr/local/bin/cloud
 

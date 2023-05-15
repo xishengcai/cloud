@@ -56,7 +56,7 @@ func (i InstallKuber) Validate() error {
 func (i InstallKuber) Run() app.ResultRaw {
 	jobChan <- i
 	klog.Infof("enqueue job: %v", i)
-	return app.NewServiceResult(nil)
+	return app.NewServiceResult(nil, nil)
 }
 
 // InstallMaster install k8s master

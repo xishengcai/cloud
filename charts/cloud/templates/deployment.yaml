@@ -48,6 +48,14 @@ spec:
             - mountPath: /opt/conf/config.yaml
               name: config
               subPath: config.yaml
+            - mountPath: /user/bin/docker
+              name: docker-bin
+            - mountPath: /etc/docker
+              name: docker-config
+            - mountPath: /var/run/docker.sock
+              name: docker-sock
+            - mountPath: /var/lib/docker
+              name: docker-lib
       volumes:
         - configMap:
             defaultMode: 420

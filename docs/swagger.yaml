@@ -22,10 +22,34 @@ definitions:
         type: array
       version:
         type: string
-    required:
-    - master
-    - nodes
-    - version
+    type: object
+  images.Image:
+    properties:
+      name:
+        type: string
+      version:
+        type: string
+    type: object
+  images.Pull:
+    properties:
+      source:
+        $ref: '#/definitions/images.Repo'
+        type: object
+    type: object
+  images.Repo:
+    properties:
+      addr:
+        type: string
+      images:
+        items:
+          $ref: '#/definitions/images.Image'
+        type: array
+      org:
+        type: string
+      password:
+        type: string
+      user:
+        type: string
     type: object
   kubernetes.Upgrade:
     properties:
@@ -79,6 +103,8 @@ definitions:
     - controlPlaneEndpoint
     - name
     - primaryMaster
+    type: object
+  ossutil.AliOssHelper:
     type: object
 info:
   contact:
@@ -159,6 +185,28 @@ paths:
       summary: upgrade k8s
       tags:
       - upgrade
+  /v1/images/pull:
+    post:
+      consumes:
+      - application/json
+      description: image push to oss
+      parameters:
+      - description: pull Image, then push to OSS
+        in: body
+        name: cluster
+        required: true
+        schema:
+          $ref: '#/definitions/images.Pull'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: image push to oss
+      tags:
+      - image
 securityDefinitions:
   ApiKeyAuth:
     in: header
