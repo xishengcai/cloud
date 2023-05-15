@@ -46,18 +46,18 @@ func (i JoinMaster) setJoinCommand() error {
 		klog.Error(err)
 		return err
 	}
-	joinCommand, err := getJoinMasterCommand(client)
+	cmd, err := getJoinMasterCommand(client)
 	if err != nil {
 		return err
 	}
-	i.JoinSlaveCommand = joinCommand
+	joinCMD[i.Master.IP] = cmd
 	return nil
 }
 
 func (i JoinMaster) joinNodes() (err error) {
 	var errorList []error
 	for _, item := range i.Nodes {
-		err := joinNode(item, i.Version, i.JoinSlaveCommand, i.DryRun)
+		err := joinNode(item, i.Version, joinCMD[i.Master.IP], i.DryRun)
 		if err != nil {
 			errorList = append(errorList, err)
 		}
@@ -65,3 +65,5 @@ func (i JoinMaster) joinNodes() (err error) {
 	// return fmt.Error(errors.NewAggregate(errorList).Error())
 	return e.MergeError(errorList)
 }
+
+var joinCMD = map[string]string{}

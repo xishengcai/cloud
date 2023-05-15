@@ -76,17 +76,20 @@ func (i *InstallSlave) setJoinCommand() error {
 	}
 
 	cmdResp := string(joinCommand)
-	i.JoinSlaveCommand = cmdResp[strings.Index(cmdResp, "kubeadm join"):]
+	joinCMD[i.Master.IP] = cmdResp[strings.Index(cmdResp, "kubeadm join"):]
 	return nil
 }
 
 func (i *InstallSlave) joinNodes() (err error) {
 	var errorList []error
-
+	err = i.setJoinCommand()
+	if err != nil {
+		return err
+	}
 	// wait until
 	for _, node := range i.Nodes {
 		go func(host models.Host) {
-			err := joinNode(host, i.Version, i.JoinSlaveCommand, i.DryRun)
+			err := joinNode(host, i.Version, joinCMD[i.Master.IP], i.DryRun)
 			if err != nil {
 				errorList = append(errorList, err)
 			}
@@ -121,7 +124,7 @@ func joinNode(host models.Host, version, joinCmd string, dryRun bool) (err error
 	if dryRun {
 		return nil
 	}
-	klog.Info("join cmd: ", joinCmd)
+	klog.Info("join cmd: ", joinCMD)
 	commands := []string{
 		fmt.Sprintf(`sh %s`, targetFile(installKubeletTpl)),
 		joinCmd,
