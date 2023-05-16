@@ -44,3 +44,18 @@ func pull(ctx *gin.Context) {
 		app.HandleServiceResult(ctx, 201, o.Run())
 	})
 }
+
+// info godoc
+// @Summary image
+// @Description image pull info
+// @Tags image
+// @Accept  json
+// @Produce  json
+// @Failure 200 {object} app.Response
+// @Router /v1/images/info [get]
+func info(ctx *gin.Context) {
+	k := &images.Info{}
+	app.HandleOperator(ctx, k, func(o app.Operator) {
+		app.HandleServiceResult(ctx, 201, o.Run())
+	})
+}

@@ -119,6 +119,29 @@
                 }
             }
         },
+        "/v1/images/info": {
+            "get": {
+                "description": "image pull info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "image"
+                ],
+                "summary": "image",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/images/pull": {
             "post": {
                 "description": "image push to oss",

@@ -185,6 +185,21 @@ paths:
       summary: upgrade k8s
       tags:
       - upgrade
+  /v1/images/info:
+    get:
+      consumes:
+      - application/json
+      description: image pull info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: image
+      tags:
+      - image
   /v1/images/pull:
     post:
       consumes:

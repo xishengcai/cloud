@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -32,46 +33,53 @@ func (p *Pull) Run() app.ResultRaw {
 	if p.Source.Org == "" {
 		p.Source.Org = "library"
 	}
-	go func() {
-		err := p.download()
-		if err != nil {
-			klog.Error(err)
-		}
-	}()
+	pullQueue <- p
 	return app.NewServiceResult(nil, nil)
 }
 
-func (p *Pull) download() error {
+func (p *Pull) download() (ImageInfo, error) {
 	for _, image := range p.Source.Images {
 		fullName := p.Source.Addr + "/" + p.Source.Org + "/" + image.Name + ":" + image.Version
 		klog.Info("image fullName: ", fullName)
+		imageInfo := ImageInfo{
+			Version:  image.Version,
+			Org:      p.Source.Org,
+			Host:     p.Source.Addr,
+			Status:   downloading,
+			FullName: fullName,
+			Updated:  time.Now(),
+			Name:     image.Name,
+		}
+		cache.set(image.Name, imageInfo)
 		reader, err := p.ImagePull(
 			context.Background(),
 			fullName,
 			types.ImagePullOptions{})
 		if err != nil {
 			klog.Error(err)
-			return err
+			return imageInfo, err
 		}
 		io.Copy(os.Stdout, reader)
 		klog.Infof("image download success")
+		cache.setStatus(imageInfo, saving)
 		shortName := fmt.Sprintf("%s-%s.tar", image.Name, image.Version)
-		path, err := p.saveImage(fullName, "/opt/image_ftp")
-		os.Remove(path)
+		path, err := p.saveImage(fullName, "./image_ftp")
 		if err != nil {
 			os.Remove(path)
-			return err
+			return imageInfo, err
 		}
 		// 上传Byte数组
+		cache.setStatus(imageInfo, pushingToOSS)
 		err = p.OSS.Bucket.PutObjectFromFile("idp/"+shortName, path, nil)
 		if err != nil {
 			os.Remove(path)
-			return err
+			return imageInfo, err
 		}
 		os.Remove(path)
+		cache.setStatus(imageInfo, success)
 		klog.Info("image upload to oss success")
 	}
-	return nil
+	return ImageInfo{}, nil
 }
 
 func (p *Pull) saveImage(imageName, dir string) (string, error) {
