@@ -36,6 +36,7 @@ func (i *InstallSlave) startJob() {
 		klog.Error(err)
 	}
 }
+
 func (i *InstallSlave) Validate() error {
 	return nil
 }
