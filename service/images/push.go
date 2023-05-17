@@ -14,6 +14,7 @@ import (
 
 	"github.com/xishengcai/cloud/pkg/app"
 	"github.com/xishengcai/cloud/pkg/ossutil"
+	"github.com/xishengcai/cloud/pkg/setting"
 )
 
 type Pull struct {
@@ -62,6 +63,7 @@ func (p *Pull) download() (ImageInfo, error) {
 		io.Copy(os.Stdout, reader)
 		klog.Infof("image download success")
 		cache.setStatus(imageInfo, saving)
+
 		shortName := fmt.Sprintf("%s-%s.tar", image.Name, image.Version)
 		path, err := p.saveImage(fullName, "./image_ftp")
 		if err != nil {
@@ -77,7 +79,13 @@ func (p *Pull) download() (ImageInfo, error) {
 		}
 		os.Remove(path)
 		cache.setStatus(imageInfo, success)
+		url := fmt.Sprintf("https://%s.%s/idp/%s",
+			setting.AliCloud.OSS.Bucket,
+			setting.AliCloud.OSS.Endpoint,
+			shortName)
+		cache.setURL(imageInfo, url)
 		klog.Info("image upload to oss success")
+		saveToLocal()
 	}
 	return ImageInfo{}, nil
 }

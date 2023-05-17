@@ -27,14 +27,15 @@ var (
 )
 
 type ImageInfo struct {
-	FullName string
-	Name     string
-	Version  string
-	Status   status
-	Host     string
-	Org      string
-	Reason   string
-	Updated  time.Time
+	FullName string    `json:"fullName"`
+	Name     string    `json:"name"`
+	Version  string    `json:"version"`
+	Status   status    `json:"status"`
+	Host     string    `json:"host"`
+	Org      string    `json:"org"`
+	Reason   string    `json:"reason"`
+	Updated  time.Time `json:"updated"`
+	URL      string    `json:"url"`
 }
 
 type status string
@@ -48,9 +49,9 @@ const (
 )
 
 type Cache struct {
-	Entry map[string][]ImageInfo
-	Index map[string]int
-	Lock  sync.Mutex
+	Entry map[string][]ImageInfo `json:"Entry"`
+	Index map[string]int         `json:"Index"`
+	Lock  sync.Mutex             `json:"-"`
 }
 
 func (c Cache) set(name string, i ImageInfo) {
@@ -74,4 +75,9 @@ func (c Cache) setStatus(i ImageInfo, stat status) {
 func (c Cache) setReason(i ImageInfo, reason string) {
 	index := c.Index[i.FullName]
 	c.Entry[i.Name][index].Reason = reason
+}
+
+func (c Cache) setURL(i ImageInfo, url string) {
+	index := c.Index[i.FullName]
+	c.Entry[i.Name][index].URL = url
 }
