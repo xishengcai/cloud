@@ -1,0 +1,18 @@
+title: cloud
+version: "1.0"
+server:
+  web:
+      port: 8080
+      readTimeout:  60
+      writeTimeout: 60
+      runMode: debug
+  mysql:
+    dbType: mysql
+    username: root
+    host: "localhost:3306"
+    password: 123456
+    dbName: drs
+    charset: utf8mb4
+    parseTime: true
+    maxIdleConnections: 10
+    maxOpenConnections: 30
