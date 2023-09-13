@@ -69,8 +69,10 @@ definitions:
       password:
         type: string
       port:
+        default: 22
         type: integer
       user:
+        default: root
         type: string
     type: object
   models.Kubernetes:
@@ -81,23 +83,27 @@ definitions:
         type: array
       controlPlaneEndpoint:
         type: string
-      joinMasterCommand:
-        type: string
       name:
+        default: test
         type: string
       networkPlug:
+        default: cilium
         type: string
       podCidr:
+        default: 10.244.0.0/16
         type: string
       primaryMaster:
         $ref: '#/definitions/models.Host'
         type: object
       registry:
+        default: registry.aliyuncs.com/google_containers
         description: registry.aliyuncs.com/google_containers， k8s.gcr.io
         type: string
       serviceCidr:
+        default: 10.96.0.0/16
         type: string
       version:
+        default: 1.21.0
         type: string
     required:
     - controlPlaneEndpoint
@@ -112,9 +118,7 @@ info:
     name: API Support
     url: http://www.swagger.io/support
   description: This is a sample server celler server.
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  license: {}
   termsOfService: http://swagger.io/terms/
   title: Swagger Example API
   version: "2.0"
@@ -229,35 +233,4 @@ securityDefinitions:
     type: apiKey
   BasicAuth:
     type: basic
-  OAuth2AccessCode:
-    authorizationUrl: https://example.com/oauth/authorize
-    flow: accessCode
-    scopes:
-      admin: ' Grants read and write access to administrative information'
-    tokenUrl: https://example.com/oauth/token
-    type: oauth2
-  OAuth2Application:
-    flow: application
-    scopes:
-      admin: ' Grants read and write access to administrative information'
-      write: ' Grants write access'
-    tokenUrl: https://example.com/oauth/token
-    type: oauth2
-  OAuth2Implicit:
-    authorizationUrl: https://example.com/oauth/authorize
-    flow: implicit
-    scopes:
-      admin: ' Grants read and write access to administrative information'
-      write: ' Grants write access'
-    type: oauth2
-  OAuth2Password:
-    flow: password
-    scopes:
-      admin: ' Grants read and write access to administrative information'
-      read: ' Grants read access'
-      write: ' Grants write access'
-    tokenUrl: https://example.com/oauth/token
-    type: oauth2
 swagger: "2.0"
-x-extension-openapi:
-  example: value on a json format

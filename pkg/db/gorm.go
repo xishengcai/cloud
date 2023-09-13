@@ -12,12 +12,11 @@ import (
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 
-	"issedb-resource/models"
-	"issedb-resource/pkg/setting"
+	"github.com/xishengcai/cloud/pkg/setting"
 )
 
 func InitMysql() {
-	m := setting.Config.Mysql
+	m := setting.Config.Server.Mysql
 	conn, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=%t&loc=Local",
 		m.Username,
 		m.Password,
@@ -43,11 +42,6 @@ func InitMysql() {
 	}
 
 	setting.DB.Debug()
-	err = setting.DB.AutoMigrate(&models.Host{})
-	if err != nil {
-		fmt.Errorf("数据库表结构迁移失败，%s", err.Error())
-		panic(err)
-	}
 }
 
 var (

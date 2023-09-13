@@ -3,7 +3,7 @@ package models
 import (
 	"gorm.io/gorm"
 
-	"issedb-resource/pkg/setting"
+	"github.com/xishengcai/cloud/pkg/setting"
 )
 
 type IDs struct {

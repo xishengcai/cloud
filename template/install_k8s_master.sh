@@ -47,7 +47,6 @@ mode: ipvs
 ---
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
-cgroupDriver: systemd
 #---
 #apiVersion: kubelet.config.k8s.io/v1beta1
 #kind: KubeletConfiguration
@@ -66,11 +65,9 @@ mkdir -p /root/.kube
 
 # install helm3
 if $isOuter; then
-#  curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-#  chmod 700 get_helm.sh
-#  ./get_helm.sh
-
-  curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+  curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+  chmod 700 get_helm.sh
+  ./get_helm.sh
 else
   curl -fsSl -o helm-canary-linux-amd64.tar.gz https://soft-package-xisheng.oss-cn-hangzhou.aliyuncs.com/k8s/helm-v3.9.3-linux-amd64.tar.gz
   tar xzvf helm-canary-linux-amd64.tar.gz

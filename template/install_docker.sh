@@ -23,7 +23,7 @@ cat > /etc/docker/daemon.json <<EOF
   "data-root": "/data/docker",
   "storage-driver": "overlay2",
   "exec-opts": [
-    "native.cgroupdriver=cgroupfs",
+    "native.cgroupdriver=systemd",
     "overlay2.override_kernel_check=true"
   ],
   "live-restore": true,

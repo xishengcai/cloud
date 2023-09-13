@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"gorm.io/gorm"
 	"k8s.io/apimachinery/pkg/util/yaml"
 	"k8s.io/klog/v2"
 
@@ -13,23 +14,25 @@ import (
 )
 
 var (
-	configFilePaths = [3]string{"conf/config.yaml", "../conf/config.yaml", "../../conf/config.yaml"}
-	EnvConfig       *envConfig
+	configFilePaths = [3]string{"config.yaml", "../config.yaml", "../config.yaml"}
+	Config          *config
 	AliCloud        aliCloud
 	Web             web
+	DB              *gorm.DB
 )
 
-type envConfig struct {
-	Title      string                  `yaml:"title"`
-	ReleaseEnv string                  `yaml:"releaseEnv"`
-	Version    string                  `yaml:"version"`
-	Server     map[string]ServerConfig `yaml:"server"`
-	RunMode    string                  `yaml:"runMode"`
+type config struct {
+	Title      string       `yaml:"title"`
+	ReleaseEnv string       `yaml:"releaseEnv"`
+	Version    string       `yaml:"version"`
+	Server     serverConfig `yaml:"server"`
+	RunMode    string       `yaml:"runMode"`
 }
 
-type ServerConfig struct {
+type serverConfig struct {
 	Web      web      `yaml:"web"`
 	AliCloud aliCloud `yaml:"aliCloud"`
+	Mysql    mysql    `yaml:"mysql"`
 }
 
 type web struct {
@@ -51,6 +54,19 @@ type oss struct {
 	Bucket   string `yaml:"bucket"`
 	Endpoint string `yaml:"endpoint"`
 	Domain   string `yaml:"domain"`
+}
+
+type mysql struct {
+	Username           string `yaml:"username"`
+	Password           string `yaml:"password"`
+	Host               string `yaml:"host"`
+	DBName             string `yaml:"dbName"`
+	TablePrefix        string `yaml:"tablePrefix"`
+	Charset            string `yaml:"charset"`
+	ParseTime          bool   `yaml:"parseTime"`
+	MaxIdleConnections int    `yaml:"maxIdleConnections"`
+	MaxOpenConnections int    `yaml:"maxOpenConnections"`
+	DbFile             string `yaml:"dbFile"`
 }
 
 func init() {
@@ -77,7 +93,7 @@ func loadConfig(path string) {
 		loadConfigWithPath(configPath)
 		break
 	}
-	if EnvConfig == nil {
+	if Config == nil {
 		panic("envConfig init fail")
 	}
 }
@@ -89,15 +105,12 @@ func loadConfigWithPath(configPath string) {
 		panic(err)
 	}
 
-	err = yaml.Unmarshal(config, &EnvConfig)
+	err = yaml.Unmarshal(config, &Config)
 	if err != nil {
 		panic(err)
 	}
 	klog.Infof("read Config: %s", configPath)
 
-	releaseEnv := EnvConfig.ReleaseEnv
-	serverConfig := EnvConfig.Server[releaseEnv]
-	Web = serverConfig.Web
-	AliCloud = serverConfig.AliCloud
-	klog.Infof("config: %+v", common.PrettifyJson(EnvConfig.Server[releaseEnv], true))
+	Web = Config.Server.Web
+	klog.Infof("config: %+v", common.PrettifyJson(config, true))
 }

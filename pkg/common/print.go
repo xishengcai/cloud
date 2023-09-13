@@ -2,6 +2,8 @@ package common
 
 import (
 	"encoding/json"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 func PrettifyJson(i interface{}, indent bool) string {
@@ -13,4 +15,8 @@ func PrettifyJson(i interface{}, indent bool) string {
 	}
 
 	return string(str)
+}
+
+func GetUUID() string {
+	return uuid.NewV4().String()
 }
