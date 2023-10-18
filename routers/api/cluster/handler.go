@@ -8,17 +8,32 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// InstallKubernetes godoc
+// Install godoc
 // @Summary install cluster
 // @Description install cluster master
-// @Tags install cluster master
+// @Tags k8s cluster
 // @Accept  json
 // @Produce  json
-// @Param cluster body models.Kubernetes true "install cluster master"
+// @Param cluster body clusterParam true "install cluster"
 // @Failure 201 {object} app.Response
-// @Router /v1/cluster/masters [post]
-func InstallKubernetes(ctx *gin.Context) {
-	k := &kubernetes.InstallKuber{}
+// @Router /v1/cluster [post]
+func Install(ctx *gin.Context) {
+	k := &kubernetes.Cluster{}
+	app.HandleOperator(ctx, k, func(o app.Operator) {
+		app.HandleServiceResult(ctx, 201, o.Run())
+	})
+}
+
+// List godoc
+// @Summary list cluster
+// @Description list cluster
+// @Tags k8s cluster
+// @Accept  json
+// @Produce  json
+// @Failure 200 {object} app.Response
+// @Router /v1/cluster [get]
+func List(ctx *gin.Context) {
+	k := &kubernetes.List{}
 	app.HandleOperator(ctx, k, func(o app.Operator) {
 		app.HandleServiceResult(ctx, 201, o.Run())
 	})
@@ -27,7 +42,7 @@ func InstallKubernetes(ctx *gin.Context) {
 // InstallKubernetesSlave godoc
 // @Summary install cluster slave
 // @Description install cluster slave
-// @Tags install cluster slave
+// @Tags k8s cluster
 // @Accept  json
 // @Produce  json
 // @Param cluster body InstallSlave true "install cluster slave"
@@ -58,7 +73,7 @@ func JoinMaster(ctx *gin.Context) {
 // Upgrade godoc
 // @Summary upgrade k8s
 // @Description install cluster slave
-// @Tags upgrade
+// @Tags k8s cluster
 // @Accept  json
 // @Produce  json
 // @Param upgrade body  kubernetes.Upgrade true  "k8s all nodes"

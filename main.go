@@ -9,7 +9,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/xishengcai/cloud/pkg/db"
 	"github.com/xishengcai/cloud/pkg/setting"
 	"github.com/xishengcai/cloud/routers"
 )
@@ -34,14 +33,14 @@ import (
 
 func main() {
 	gin.SetMode(setting.Config.RunMode)
-	db.InitMysql()
+	//db.InitMysql()
 
 	handler := routers.InitRouter()
 	server := &http.Server{
-		Addr:           fmt.Sprintf(":%s", setting.Web.Port),
+		Addr:           fmt.Sprintf(":%s", setting.Config.Web.Port),
 		Handler:        handler,
-		ReadTimeout:    setting.Web.ReadTimeout * time.Second,
-		WriteTimeout:   setting.Web.WriteTimeout * time.Second,
+		ReadTimeout:    setting.Config.Web.ReadTimeout * time.Second,
+		WriteTimeout:   setting.Config.Web.WriteTimeout * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 	if err := server.ListenAndServe(); err != nil {

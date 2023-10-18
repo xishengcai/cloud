@@ -9,6 +9,19 @@ definitions:
       resMsg:
         type: object
     type: object
+  cluster.Host:
+    properties:
+      ip:
+        type: string
+      password:
+        type: string
+      port:
+        default: 22
+        type: integer
+      user:
+        default: root
+        type: string
+    type: object
   cluster.InstallSlave:
     properties:
       dryRun:
@@ -23,33 +36,43 @@ definitions:
       version:
         type: string
     type: object
-  images.Image:
+  cluster.clusterParam:
     properties:
-      name:
+      controlPlaneEndpoint:
         type: string
-      version:
-        type: string
-    type: object
-  images.Pull:
-    properties:
-      source:
-        $ref: '#/definitions/images.Repo'
-        type: object
-    type: object
-  images.Repo:
-    properties:
-      addr:
-        type: string
-      images:
+      dryRun:
+        type: boolean
+      master:
         items:
-          $ref: '#/definitions/images.Image'
+          $ref: '#/definitions/cluster.Host'
         type: array
-      org:
+      name:
+        default: test
         type: string
-      password:
+      networkPlug:
+        default: cilium
         type: string
-      user:
+      podCidr:
+        default: 10.244.0.0/16
         type: string
+      registry:
+        default: registry.aliyuncs.com/google_containers
+        description: registry.aliyuncs.com/google_containers， k8s.gcr.io
+        type: string
+      serviceCidr:
+        default: 10.96.0.0/16
+        type: string
+      slaveNode:
+        items:
+          $ref: '#/definitions/cluster.Host'
+        type: array
+      version:
+        default: 1.22.15
+        type: string
+    required:
+    - controlPlaneEndpoint
+    - master
+    - name
     type: object
   kubernetes.Upgrade:
     properties:
@@ -61,6 +84,42 @@ definitions:
         type: array
       version:
         type: string
+    type: object
+  models.Cluster:
+    properties:
+      controlPlaneEndpoint:
+        type: string
+      master:
+        items:
+          $ref: '#/definitions/models.Host'
+        type: array
+      name:
+        default: test
+        type: string
+      networkPlug:
+        default: cilium
+        type: string
+      podCidr:
+        default: 10.244.0.0/16
+        type: string
+      registry:
+        default: registry.aliyuncs.com/google_containers
+        description: registry.aliyuncs.com/google_containers， k8s.gcr.io
+        type: string
+      serviceCidr:
+        default: 10.96.0.0/16
+        type: string
+      slaveNode:
+        items:
+          $ref: '#/definitions/models.Host'
+        type: array
+      version:
+        default: 1.22.15
+        type: string
+    required:
+    - controlPlaneEndpoint
+    - master
+    - name
     type: object
   models.Host:
     properties:
@@ -75,43 +134,6 @@ definitions:
         default: root
         type: string
     type: object
-  models.Kubernetes:
-    properties:
-      backendMasters:
-        items:
-          $ref: '#/definitions/models.Host'
-        type: array
-      controlPlaneEndpoint:
-        type: string
-      name:
-        default: test
-        type: string
-      networkPlug:
-        default: cilium
-        type: string
-      podCidr:
-        default: 10.244.0.0/16
-        type: string
-      primaryMaster:
-        $ref: '#/definitions/models.Host'
-        type: object
-      registry:
-        default: registry.aliyuncs.com/google_containers
-        description: registry.aliyuncs.com/google_containers， k8s.gcr.io
-        type: string
-      serviceCidr:
-        default: 10.96.0.0/16
-        type: string
-      version:
-        default: 1.21.0
-        type: string
-    required:
-    - controlPlaneEndpoint
-    - name
-    - primaryMaster
-    type: object
-  ossutil.AliOssHelper:
-    type: object
 info:
   contact:
     email: support@swagger.io
@@ -123,6 +145,42 @@ info:
   title: Swagger Example API
   version: "2.0"
 paths:
+  /v1/cluster:
+    get:
+      consumes:
+      - application/json
+      description: list cluster
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: list cluster
+      tags:
+      - k8s cluster
+    post:
+      consumes:
+      - application/json
+      description: install cluster master
+      parameters:
+      - description: install cluster
+        in: body
+        name: cluster
+        required: true
+        schema:
+          $ref: '#/definitions/cluster.clusterParam'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: install cluster
+      tags:
+      - k8s cluster
   /v1/cluster/masters:
     post:
       consumes:
@@ -134,7 +192,7 @@ paths:
         name: cluster
         required: true
         schema:
-          $ref: '#/definitions/models.Kubernetes'
+          $ref: '#/definitions/models.Cluster'
       produces:
       - application/json
       responses:
@@ -166,7 +224,7 @@ paths:
             $ref: '#/definitions/app.Response'
       summary: install cluster slave
       tags:
-      - install cluster slave
+      - k8s cluster
   /v1/cluster/upgrade:
     post:
       consumes:
@@ -188,44 +246,7 @@ paths:
             $ref: '#/definitions/app.Response'
       summary: upgrade k8s
       tags:
-      - upgrade
-  /v1/images/info:
-    get:
-      consumes:
-      - application/json
-      description: image pull info
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/app.Response'
-      summary: image
-      tags:
-      - image
-  /v1/images/pull:
-    post:
-      consumes:
-      - application/json
-      description: image push to oss
-      parameters:
-      - description: pull Image, then push to OSS
-        in: body
-        name: cluster
-        required: true
-        schema:
-          $ref: '#/definitions/images.Pull'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/app.Response'
-      summary: image push to oss
-      tags:
-      - image
+      - k8s cluster
 securityDefinitions:
   ApiKeyAuth:
     in: header

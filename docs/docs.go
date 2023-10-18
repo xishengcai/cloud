@@ -30,6 +30,61 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/v1/cluster": {
+            "get": {
+                "description": "list cluster",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "k8s cluster"
+                ],
+                "summary": "list cluster",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "install cluster master",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "k8s cluster"
+                ],
+                "summary": "install cluster",
+                "parameters": [
+                    {
+                        "description": "install cluster",
+                        "name": "cluster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/cluster.clusterParam"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/cluster/masters": {
             "post": {
                 "description": "install cluster master",
@@ -50,7 +105,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Kubernetes"
+                            "$ref": "#/definitions/models.Cluster"
                         }
                     }
                 ],
@@ -74,7 +129,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "install cluster slave"
+                    "k8s cluster"
                 ],
                 "summary": "install cluster slave",
                 "parameters": [
@@ -108,7 +163,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "upgrade"
+                    "k8s cluster"
                 ],
                 "summary": "upgrade k8s",
                 "parameters": [
@@ -119,63 +174,6 @@ var doc = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/kubernetes.Upgrade"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/images/info": {
-            "get": {
-                "description": "image pull info",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "image"
-                ],
-                "summary": "image",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/images/pull": {
-            "post": {
-                "description": "image push to oss",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "image"
-                ],
-                "summary": "image push to oss",
-                "parameters": [
-                    {
-                        "description": "pull Image, then push to OSS",
-                        "name": "cluster",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/images.Pull"
                         }
                     }
                 ],
@@ -205,6 +203,25 @@ var doc = `{
                 }
             }
         },
+        "cluster.Host": {
+            "type": "object",
+            "properties": {
+                "ip": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer",
+                    "default": 22
+                },
+                "user": {
+                    "type": "string",
+                    "default": "root"
+                }
+            }
+        },
         "cluster.InstallSlave": {
             "type": "object",
             "properties": {
@@ -226,46 +243,56 @@ var doc = `{
                 }
             }
         },
-        "images.Image": {
+        "cluster.clusterParam": {
             "type": "object",
+            "required": [
+                "controlPlaneEndpoint",
+                "master",
+                "name"
+            ],
             "properties": {
-                "name": {
+                "controlPlaneEndpoint": {
                     "type": "string"
                 },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
-        "images.Pull": {
-            "type": "object",
-            "properties": {
-                "source": {
-                    "type": "object",
-                    "$ref": "#/definitions/images.Repo"
-                }
-            }
-        },
-        "images.Repo": {
-            "type": "object",
-            "properties": {
-                "addr": {
-                    "type": "string"
+                "dryRun": {
+                    "type": "boolean"
                 },
-                "images": {
+                "master": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/images.Image"
+                        "$ref": "#/definitions/cluster.Host"
                     }
                 },
-                "org": {
-                    "type": "string"
+                "name": {
+                    "type": "string",
+                    "default": "test"
                 },
-                "password": {
-                    "type": "string"
+                "networkPlug": {
+                    "type": "string",
+                    "default": "cilium"
                 },
-                "user": {
-                    "type": "string"
+                "podCidr": {
+                    "type": "string",
+                    "default": "10.244.0.0/16"
+                },
+                "registry": {
+                    "description": "registry.aliyuncs.com/google_containers， k8s.gcr.io",
+                    "type": "string",
+                    "default": "registry.aliyuncs.com/google_containers"
+                },
+                "serviceCidr": {
+                    "type": "string",
+                    "default": "10.96.0.0/16"
+                },
+                "slaveNode": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/cluster.Host"
+                    }
+                },
+                "version": {
+                    "type": "string",
+                    "default": "1.22.15"
                 }
             }
         },
@@ -283,6 +310,56 @@ var doc = `{
                 },
                 "version": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Cluster": {
+            "type": "object",
+            "required": [
+                "controlPlaneEndpoint",
+                "master",
+                "name"
+            ],
+            "properties": {
+                "controlPlaneEndpoint": {
+                    "type": "string"
+                },
+                "master": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Host"
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "default": "test"
+                },
+                "networkPlug": {
+                    "type": "string",
+                    "default": "cilium"
+                },
+                "podCidr": {
+                    "type": "string",
+                    "default": "10.244.0.0/16"
+                },
+                "registry": {
+                    "description": "registry.aliyuncs.com/google_containers， k8s.gcr.io",
+                    "type": "string",
+                    "default": "registry.aliyuncs.com/google_containers"
+                },
+                "serviceCidr": {
+                    "type": "string",
+                    "default": "10.96.0.0/16"
+                },
+                "slaveNode": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Host"
+                    }
+                },
+                "version": {
+                    "type": "string",
+                    "default": "1.22.15"
                 }
             }
         },
@@ -304,57 +381,6 @@ var doc = `{
                     "default": "root"
                 }
             }
-        },
-        "models.Kubernetes": {
-            "type": "object",
-            "required": [
-                "controlPlaneEndpoint",
-                "name",
-                "primaryMaster"
-            ],
-            "properties": {
-                "backendMasters": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Host"
-                    }
-                },
-                "controlPlaneEndpoint": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string",
-                    "default": "test"
-                },
-                "networkPlug": {
-                    "type": "string",
-                    "default": "cilium"
-                },
-                "podCidr": {
-                    "type": "string",
-                    "default": "10.244.0.0/16"
-                },
-                "primaryMaster": {
-                    "type": "object",
-                    "$ref": "#/definitions/models.Host"
-                },
-                "registry": {
-                    "description": "registry.aliyuncs.com/google_containers， k8s.gcr.io",
-                    "type": "string",
-                    "default": "registry.aliyuncs.com/google_containers"
-                },
-                "serviceCidr": {
-                    "type": "string",
-                    "default": "10.96.0.0/16"
-                },
-                "version": {
-                    "type": "string",
-                    "default": "1.21.0"
-                }
-            }
-        },
-        "ossutil.AliOssHelper": {
-            "type": "object"
         }
     },
     "securityDefinitions": {

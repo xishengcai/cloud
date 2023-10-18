@@ -17,7 +17,7 @@ import (
 type InstallSlave struct {
 	Nodes            []models.Host `json:"nodes"`
 	Master           models.Host   `json:"master"`
-	Version          string        `json:"version"`
+	Version          string        `json:"-"`
 	JoinSlaveCommand string        `json:"-"`
 	DryRun           bool          `json:"dryRun,omitempty"`
 }

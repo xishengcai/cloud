@@ -16,30 +16,22 @@ import (
 var (
 	configFilePaths = [3]string{"config.yaml", "../config.yaml", "../config.yaml"}
 	Config          *config
-	AliCloud        aliCloud
-	Web             web
 	DB              *gorm.DB
 )
 
 type config struct {
-	Title      string       `yaml:"title"`
-	ReleaseEnv string       `yaml:"releaseEnv"`
-	Version    string       `yaml:"version"`
-	Server     serverConfig `yaml:"server"`
-	RunMode    string       `yaml:"runMode"`
-}
-
-type serverConfig struct {
-	Web      web      `yaml:"web"`
-	AliCloud aliCloud `yaml:"aliCloud"`
-	Mysql    mysql    `yaml:"mysql"`
+	Title   string  `yaml:"title"`
+	Version string  `yaml:"version"`
+	RunMode string  `yaml:"runMode"`
+	Mysql   mysql   `yaml:"mysql"`
+	Mongodb mongodb `yaml:"mongodb"`
+	Web     web     `yaml:"web"`
 }
 
 type web struct {
 	Port         string        `yaml:"port"`
 	ReadTimeout  time.Duration `yaml:"readTimeout"`
 	WriteTimeout time.Duration `yaml:"writeTimeout"`
-	RunMode      string        `yaml:"runMode"`
 }
 
 type aliCloud struct {
@@ -67,6 +59,14 @@ type mysql struct {
 	MaxIdleConnections int    `yaml:"maxIdleConnections"`
 	MaxOpenConnections int    `yaml:"maxOpenConnections"`
 	DbFile             string `yaml:"dbFile"`
+}
+
+type mongodb struct {
+	User     string `yaml:"address"`
+	Password string `yaml:"password"`
+	Host     string `yaml:"host"`
+	Port     string `yaml:"port"`
+	Database string `yaml:"database"`
 }
 
 func init() {
@@ -99,18 +99,16 @@ func loadConfig(path string) {
 }
 
 func loadConfigWithPath(configPath string) {
-	config, err := os.ReadFile(configPath)
+	cfg, err := os.ReadFile(configPath)
 	if err != nil {
 		klog.Error("read config file err: ", err)
 		panic(err)
 	}
 
-	err = yaml.Unmarshal(config, &Config)
+	err = yaml.Unmarshal(cfg, &Config)
 	if err != nil {
 		panic(err)
 	}
 	klog.Infof("read Config: %s", configPath)
-
-	Web = Config.Server.Web
-	klog.Infof("config: %+v", common.PrettifyJson(config, true))
+	klog.Infof("config: %+v", common.PrettifyJson(Config, true))
 }

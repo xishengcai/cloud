@@ -41,70 +41,90 @@ var (
 	}
 )
 
-// InstallKuber implement install k8s master and slave
+// Cluster implement install k8s master and slave
 // ssh to nodes, run shell script
-type InstallKuber struct {
-	*models.Kubernetes
+type Cluster struct {
+	*models.Cluster
 	DryRun bool `json:"dryRun"`
 }
 
-func (i InstallKuber) Validate() error {
+func (i Cluster) Validate() error {
 	return nil
 }
 
+func (i Cluster) getSlave() InstallSlave {
+	return InstallSlave{
+		Nodes:   i.SlaveNode,
+		Master:  i.Master[0],
+		Version: i.Version,
+	}
+}
+
 // Run Install export to API interface
-func (i InstallKuber) Run() app.ResultRaw {
+func (i Cluster) Run() app.ResultRaw {
+	err := i.Insert()
+	if err != nil {
+		return app.NewServiceResult(nil, err)
+	}
 	jobChan <- i
 	klog.Infof("enqueue job: %v", i)
 	return app.NewServiceResult(nil, nil)
 }
 
 // InstallMaster install k8s master
-func (i InstallKuber) install() error {
-	client, err := ssh.GetClient(i.PrimaryMaster)
+func (i Cluster) install() error {
+	client, err := ssh.GetClient(i.Master[0])
 	if err != nil {
 		klog.Error(err)
 		return err
 	}
-	err = docker.InstallDocker(i.PrimaryMaster, i.DryRun)
+	err = docker.InstallDocker(i.Master[0], i.DryRun)
 	if err != nil {
 		klog.Errorf("install docker failed: %v", err)
 		return errors.Wrap(err, "install docker")
 	}
 
-	err = i.InstallMaster(i.PrimaryMaster)
+	err = i.InstallMaster(i.Master[0])
 	if err != nil {
 		klog.Errorf("install master failed: %v", err)
 		return errors.Wrap(err, "install master")
 	}
 
 	// get joinMaster cmd
-	i.JoinMasterCommand, err = getJoinMasterCommand(client)
+	joinCommand, err := getJoinMasterCommand(client)
 	if err != nil {
 		klog.Errorf("getJoinMasterCommand failed: %v", err)
 		return errors.Wrap(err, "getJoinMasterCommand failed")
 	}
 
-	klog.Infof("joinMasterCommand: %s", i.JoinMasterCommand)
+	klog.Infof("joinMasterCommand: %s", joinCommand)
 	var errs []error
-	for _, item := range i.BackendMasters {
-		err = joinNode(item, i.Version, i.JoinMasterCommand, i.DryRun)
+	for index, item := range i.Master {
+		if index == 0 {
+			continue
+		}
+		err = joinNode(item, i.Version, joinCommand, i.DryRun)
 		if err != nil {
 			errs = append(errs, err)
 		}
 	}
 	return e.MergeError(errs)
+
 }
 
-func (i InstallKuber) startJob() {
+func (i Cluster) startJob() {
 	err := i.install()
 	if err != nil {
 		klog.Error(err)
+		return
 	}
+
+	slave := i.getSlave()
+	slave.startJob()
 }
 
 // InstallMaster kube init by kubeadm_config, or join k8s as master role
-func (i InstallKuber) InstallMaster(host models.Host) (err error) {
+func (i Cluster) InstallMaster(host models.Host) (err error) {
 	client, err := ssh.GetClient(host)
 	if err != nil {
 		return err

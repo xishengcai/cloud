@@ -6,7 +6,7 @@ COPY ./bin/cloud /usr/local/bin
 COPY ./conf  /opt/conf
 COPY ./template /opt/template
 COPY ./docs /opt/docs
-COPY ./image_ftp /opt/image_ftp
+#COPY ./image_ftp /opt/image_ftp
 
 RUN chmod +x /usr/local/bin/cloud
 
