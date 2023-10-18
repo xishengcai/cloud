@@ -1,6 +1,8 @@
 package app
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -87,14 +89,20 @@ func (s *ServiceResult) GetResponse() Response {
 	response := Response{Data: s.data}
 	if s.HasError() {
 		response.ResMsg = s.ResMsg()
+		response.EventCode = 1
 	} else {
 		response.ResMsg = "操作成功"
 	}
 	return response
 }
 
-func HandleServiceResult(ctx *gin.Context, status int, rr ResultRaw) {
+func HandleServiceResultWithCode(ctx *gin.Context, status int, rr ResultRaw) {
 	ctx.JSON(status, rr.GetResponse())
+}
+
+func HandleServiceResult(ctx *gin.Context, rr ResultRaw) {
+	res := rr.GetResponse()
+	ctx.JSON(http.StatusOK, res)
 }
 
 type InterfaceArray struct {

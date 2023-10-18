@@ -20,7 +20,7 @@ import (
 func Install(ctx *gin.Context) {
 	k := &kubernetes.Cluster{}
 	app.HandleOperator(ctx, k, func(o app.Operator) {
-		app.HandleServiceResult(ctx, 201, o.Run())
+		app.HandleServiceResultWithCode(ctx, 201, o.Run())
 	})
 }
 
@@ -35,7 +35,7 @@ func Install(ctx *gin.Context) {
 func List(ctx *gin.Context) {
 	k := &kubernetes.List{}
 	app.HandleOperator(ctx, k, func(o app.Operator) {
-		app.HandleServiceResult(ctx, 201, o.Run())
+		app.HandleServiceResult(ctx, o.Run())
 	})
 }
 
@@ -51,7 +51,7 @@ func List(ctx *gin.Context) {
 func InstallKubernetesSlave(ctx *gin.Context) {
 	k := &kubernetes.InstallSlave{}
 	app.HandleOperator(ctx, k, func(o app.Operator) {
-		app.HandleServiceResult(ctx, 201, o.Run())
+		app.HandleServiceResult(ctx, o.Run())
 	})
 }
 
@@ -66,7 +66,7 @@ type InstallSlave struct {
 func JoinMaster(ctx *gin.Context) {
 	k := &kubernetes.JoinMaster{}
 	app.HandleOperator(ctx, k, func(o app.Operator) {
-		app.HandleServiceResult(ctx, 201, o.Run())
+		app.HandleServiceResult(ctx, o.Run())
 	})
 }
 
@@ -82,6 +82,6 @@ func JoinMaster(ctx *gin.Context) {
 func Upgrade(ctx *gin.Context) {
 	u := &kubernetes.Upgrade{}
 	app.HandleOperator(ctx, u, func(o app.Operator) {
-		app.HandleServiceResult(ctx, 200, o.Run())
+		app.HandleServiceResult(ctx, o.Run())
 	})
 }
