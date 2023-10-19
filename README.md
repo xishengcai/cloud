@@ -11,22 +11,31 @@
 ## post example
 ### install master
 ```json
- {
-  "name": "xxxx",
-  "clusterName": "xxxxxxx",
-  "controlPlaneEndpoint": "9.16.0.27",
-  "registry":"registry.aliyuncs.com/google_containers",
-  "primaryMaster":
-  {
-    "ip": "9.16.0.27",
-    "password": "password",
-    "port": 22,
-    "user": "root"
-  },
-  "netWorkPlug": "cilium",
-  "podCidr": "30.244.0.0/16",
-  "serviceCidr": "30.96.0.0/16",
-  "version": "1.21.5"
+{
+  "controlPlaneEndpoint": "string",
+  "dryRun": true,
+  "master": [
+    {
+      "ip": "string",
+      "password": "string",
+      "port": 22,
+      "user": "root"
+    }
+  ],
+  "name": "test",
+  "networkPlug": "cilium",
+  "podCidr": "10.244.0.0/16",
+  "registry": "registry.aliyuncs.com/google_containers",
+  "serviceCidr": "10.96.0.0/16",
+  "slaveNode": [
+    {
+      "ip": "string",
+      "password": "string",
+      "port": 22,
+      "user": "root"
+    }
+  ],
+  "version": "1.22.15"
 }
 ```
 
