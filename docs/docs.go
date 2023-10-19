@@ -43,6 +43,20 @@ var doc = `{
                     "k8s cluster"
                 ],
                 "summary": "list cluster",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page number, optional",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page size, optional",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -72,40 +86,6 @@ var doc = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/cluster.clusterParam"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/cluster/masters": {
-            "post": {
-                "description": "install cluster master",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "install cluster master"
-                ],
-                "summary": "install cluster",
-                "parameters": [
-                    {
-                        "description": "install cluster master",
-                        "name": "cluster",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Cluster"
                         }
                     }
                 ],
@@ -310,56 +290,6 @@ var doc = `{
                 },
                 "version": {
                     "type": "string"
-                }
-            }
-        },
-        "models.Cluster": {
-            "type": "object",
-            "required": [
-                "controlPlaneEndpoint",
-                "master",
-                "name"
-            ],
-            "properties": {
-                "controlPlaneEndpoint": {
-                    "type": "string"
-                },
-                "master": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Host"
-                    }
-                },
-                "name": {
-                    "type": "string",
-                    "default": "test"
-                },
-                "networkPlug": {
-                    "type": "string",
-                    "default": "cilium"
-                },
-                "podCidr": {
-                    "type": "string",
-                    "default": "10.244.0.0/16"
-                },
-                "registry": {
-                    "description": "registry.aliyuncs.com/google_containers， k8s.gcr.io",
-                    "type": "string",
-                    "default": "registry.aliyuncs.com/google_containers"
-                },
-                "serviceCidr": {
-                    "type": "string",
-                    "default": "10.96.0.0/16"
-                },
-                "slaveNode": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Host"
-                    }
-                },
-                "version": {
-                    "type": "string",
-                    "default": "1.22.15"
                 }
             }
         },

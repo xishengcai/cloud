@@ -1,19 +1,9 @@
 package models
 
-import (
-	"context"
-	"time"
-
-	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/mongo"
-
-	"github.com/xishengcai/cloud/pkg/common"
-)
-
 // Cluster kubernetes cluster meta data
 // registry.aliyuncs.com/google_containers， k8s.gcr.io
 type Cluster struct {
-	ID                   string `bson:"id" json:"-"`
+	ID                   string `bson:"id" json:"id"`
 	Name                 string `bson:"name" json:"name" validate:"required" default:"test"`
 	Master               []Host `bson:"master" json:"master" validate:"required"`
 	NetWorkPlug          string `bson:"networkPlug" json:"networkPlug" default:"cilium"`
@@ -28,53 +18,4 @@ type Cluster struct {
 // Version cluster version
 type Version struct {
 	Version string `form:"version" default:"1.22.15"`
-}
-
-func GetCluster() *Cluster {
-	return &Cluster{}
-}
-
-func (c *Cluster) Query(filter interface{}, options string) ([]Cluster, error) {
-	collection := GetCollection("cluster")
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
-	clusterList := make([]Cluster, 0)
-	cur := &mongo.Cursor{}
-	var err error
-	switch options {
-	case Find:
-		cur, err = collection.Find(ctx, filter)
-		if err != nil {
-			return nil, err
-		}
-	case Aggregate:
-		cur, err = collection.Aggregate(ctx, filter)
-		if err != nil {
-			return nil, err
-		}
-	default:
-		return nil, errors.New("mongo query option not support")
-	}
-	defer cur.Close(ctx)
-	for cur.Next(ctx) {
-		var cluster Cluster
-		err := cur.Decode(&cluster)
-		if err != nil {
-			return nil, err
-		}
-		clusterList = append(clusterList, cluster)
-	}
-	return clusterList, nil
-}
-
-func (c *Cluster) Insert() error {
-	c.ID = common.GetUUID()
-	collection := GetCollection("cluster")
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
-	_, err := collection.InsertOne(ctx, c)
-	if err != nil {
-		return err
-	}
-	return nil
 }

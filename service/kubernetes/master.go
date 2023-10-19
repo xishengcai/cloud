@@ -6,8 +6,11 @@ import (
 	"strings"
 	"text/template"
 
+	"golang.org/x/net/context"
+
 	"github.com/xishengcai/cloud/models"
 	"github.com/xishengcai/cloud/pkg/app"
+	"github.com/xishengcai/cloud/pkg/common"
 	"github.com/xishengcai/cloud/pkg/e"
 	"github.com/xishengcai/cloud/pkg/ssh"
 	"github.com/xishengcai/cloud/service/docker"
@@ -62,7 +65,8 @@ func (i Cluster) getSlave() InstallSlave {
 
 // Run Install export to API interface
 func (i Cluster) Run() app.ResultRaw {
-	err := i.Insert()
+	i.ID = common.GetUUID()
+	_, err := mongoCollection.InsertOne(context.TODO(), i)
 	if err != nil {
 		return app.NewServiceResult(nil, err)
 	}

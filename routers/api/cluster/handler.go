@@ -30,6 +30,8 @@ func Install(ctx *gin.Context) {
 // @Tags k8s cluster
 // @Accept  json
 // @Produce  json
+// @param   page   query  int    false "page number, optional"
+// @param   pageSize  query  int     false  "page size, optional"
 // @Failure 200 {object} app.Response
 // @Router /v1/cluster [get]
 func List(ctx *gin.Context) {

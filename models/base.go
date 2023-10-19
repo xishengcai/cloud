@@ -10,15 +10,15 @@ type BaseInfo struct {
 }
 
 type PageInfo struct {
-	Page     int `form:"page,default=1"`
-	PageSize int `form:"pageSize,default=10"`
+	Page     int64 `form:"page,default=1"`
+	PageSize int64 `form:"pageSize,default=10"`
 }
 
-func (p PageInfo) GetOffset() int {
+func (p PageInfo) GetOffset() int64 {
 	return (p.Page - 1) * p.PageSize
 }
 
-func (baseInfo *BaseInfo) SetPageInfo(page, pageSize int) {
+func (baseInfo *BaseInfo) SetPageInfo(page, pageSize int64) {
 	baseInfo.Page = page
 	baseInfo.PageSize = pageSize
 }

@@ -85,42 +85,6 @@ definitions:
       version:
         type: string
     type: object
-  models.Cluster:
-    properties:
-      controlPlaneEndpoint:
-        type: string
-      master:
-        items:
-          $ref: '#/definitions/models.Host'
-        type: array
-      name:
-        default: test
-        type: string
-      networkPlug:
-        default: cilium
-        type: string
-      podCidr:
-        default: 10.244.0.0/16
-        type: string
-      registry:
-        default: registry.aliyuncs.com/google_containers
-        description: registry.aliyuncs.com/google_containers， k8s.gcr.io
-        type: string
-      serviceCidr:
-        default: 10.96.0.0/16
-        type: string
-      slaveNode:
-        items:
-          $ref: '#/definitions/models.Host'
-        type: array
-      version:
-        default: 1.22.15
-        type: string
-    required:
-    - controlPlaneEndpoint
-    - master
-    - name
-    type: object
   models.Host:
     properties:
       ip:
@@ -150,6 +114,15 @@ paths:
       consumes:
       - application/json
       description: list cluster
+      parameters:
+      - description: page number, optional
+        in: query
+        name: page
+        type: integer
+      - description: page size, optional
+        in: query
+        name: pageSize
+        type: integer
       produces:
       - application/json
       responses:
@@ -181,28 +154,6 @@ paths:
       summary: install cluster
       tags:
       - k8s cluster
-  /v1/cluster/masters:
-    post:
-      consumes:
-      - application/json
-      description: install cluster master
-      parameters:
-      - description: install cluster master
-        in: body
-        name: cluster
-        required: true
-        schema:
-          $ref: '#/definitions/models.Cluster'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/app.Response'
-      summary: install cluster
-      tags:
-      - install cluster master
   /v1/cluster/slaves:
     post:
       consumes:

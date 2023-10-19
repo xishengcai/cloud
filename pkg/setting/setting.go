@@ -64,8 +64,7 @@ type mysql struct {
 type mongodb struct {
 	User     string `yaml:"address"`
 	Password string `yaml:"password"`
-	Host     string `yaml:"host"`
-	Port     string `yaml:"port"`
+	Address  string `yaml:"address"`
 	Database string `yaml:"database"`
 }
 

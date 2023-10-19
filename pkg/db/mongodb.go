@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	DefaultMongoClient   *mongo.Client
+	MongoClient          *mongo.Client
 	DefaultMongoDatabase *mongo.Database
 )
 
@@ -21,7 +21,7 @@ func init() {
 	cfg := setting.Config.Mongodb
 	connectCtx, connectCancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer connectCancel()
-	uri := fmt.Sprintf("mongodb://%s:%s@%s", cfg.User, cfg.Password, cfg.Host)
+	uri := fmt.Sprintf("mongodb://%s:%s@%s", cfg.User, cfg.Password, cfg.Address)
 	client, err := mongo.Connect(connectCtx, options.Client().ApplyURI(uri))
 	if err != nil {
 		panic(err)
@@ -35,5 +35,16 @@ func init() {
 	}
 
 	DefaultMongoDatabase = client.Database(setting.Config.Mongodb.Database)
-	DefaultMongoClient = client
+	MongoClient = client
+}
+
+// CreateMongoCollection ...
+func CreateMongoCollection(dbName, colName string) BaseCollection {
+	dataBase := MongoClient.Database(dbName)
+	return &BaseCollectionImpl{
+		DbName:     dbName,
+		ColName:    colName,
+		DataBase:   dataBase,
+		Collection: dataBase.Collection(colName),
+	}
 }
