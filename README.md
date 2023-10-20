@@ -4,6 +4,7 @@
 - [x] batch install slaves
 - [] web terminal
 - [x] dashboard(angular)
+- [] support skip step, if docker already install
 
 ## swagger url
 - http://xxx:xxx/swagger/index.html
