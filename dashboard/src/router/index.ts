@@ -9,7 +9,7 @@ const routes = [
         redirect: "/cluster",
         children: [
             {
-                path: "/cluster",
+                path: "cluster",
                 name:"cluster",
                 component: Cluster,
             }

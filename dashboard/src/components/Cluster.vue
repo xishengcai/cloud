@@ -24,33 +24,41 @@
 
   <a-modal v-model:visible="visible" :title="title" @ok="onSave" @cancel="onCancel" cancelText="取消" okText="保存"
            width="800px" :centered="true">
-    <div style="height: 55vh; overflow-y: scroll;padding: 0 15px;">
-      <a-form ref="clusterFormRef" :model="cluster" layout="vertical" name="cluster" :rules="rules">
-        <a-row :gutter="16">
+    <div style="height: 55vh; overflow-y: scroll; padding: 0 15px;">
+      <a-form-model ref="clusterFormRef" :model="cluster" layout="vertical" name="cluster" :rules="rules">
+        <a-row :gutter="20">
           <a-col auto-size>
             <a-form-item label="名称" name="name">
               <a-input v-model:value="cluster.name"/>
             </a-form-item>
           </a-col>
-          <a-col :span="8">
+        </a-row>
+
+        <a-row :gutter="20">
+          <a-col auto-size>
             <a-form-item label="endPoint" name="endPoint">
               <a-input v-model:value="cluster.controlPlaneEndpoint"/>
             </a-form-item>
           </a-col>
-          <a-col :span="8">
+        </a-row>
+
+        <a-row :gutter="20">
+          <a-col auto-size>
             <a-form-item label="service网段" name="serviceCidr">
               <a-input v-model:value="cluster.serviceCidr"/>
             </a-form-item>
           </a-col>
-        </a-row>
 
-        <a-row :gutter="16">
-          <a-col :span="8">
+          <a-col auto-size>
             <a-form-item label="pod网段" name="podCidr">
               <a-input v-model:value="cluster.podCidr"/>
             </a-form-item>
           </a-col>
-          <a-col :span="8">
+        </a-row>
+
+        <a-row :gutter="20">
+
+          <a-col auto-size>
             <a-form-item label="网络插件" name="networkPlug">
               <a-select
                   v-model:value="cluster.networkPlug"
@@ -66,16 +74,19 @@
           </a-col>
         </a-row>
 
-        <a-row :gutter="16">
-          <a-col :span="16">
+        <a-row :gutter="20">
+          <a-col auto-size>
             <a-form-item label="version" name="版本">
               <a-input v-model:value="cluster.version"></a-input>
             </a-form-item>
           </a-col>
         </a-row>
-        <a-row :gutter="16">
-          <a-col :span="16">
-            <a-form-item label="master node">
+        <a-row :gutter="80">
+          <a-col auto-size>
+            <a-form-item label="添加 master 节点" >
+              <a-form-item>
+
+              </a-form-item>
               <a-form-item
                   v-for="(host, index) in cluster.master"
                   :key="host"
@@ -85,7 +96,7 @@
                   <a-input
                       v-model:value="host.ip"
                       placeholder="please input host IP"
-                      style="width: 30%; margin-right: 8px"
+                      style="width: 100%; "
                   />
                 </a-form-item>
                 <MinusCircleOutlined
@@ -98,15 +109,48 @@
               <a-form-item v-bind="formItemLayoutWithOutLabel">
                 <a-button type="dashed" style="width: 60%" @click="addMaster">
                   <PlusOutlined />
-                  Add field
+                  Add Host
                 </a-button>
               </a-form-item>
             </a-form-item>
           </a-col>
         </a-row>
+        <a-row :gutter="80">
+          <a-col auto-size>
+            <a-form-item label="添加 slave 节点" >
+              <a-form-item>
 
+              </a-form-item>
+              <a-form-item
+                  v-for="(host, index) in cluster.slaveNode"
+                  :key="host"
+                  v-bind="index === 0 ? formItemLayout : {}"
+                  :label="index === 0 ? 'host' : ''">
+                <a-form-item label="IP" name="IP">
+                  <a-input
+                      v-model:value="host.ip"
+                      placeholder="please input host IP"
+                      style="width: 100%; "
+                  />
+                </a-form-item>
+                <MinusCircleOutlined
+                    v-if="cluster.master.length > 1"
+                    class="dynamic-delete-button"
+                    :disabled="cluster.master.length === 1"
+                    @click="removeSlave(host)"
+                />
+              </a-form-item>
+              <a-form-item v-bind="formItemLayoutWithOutLabel">
+                <a-button type="dashed" style="width: 60%" @click="addSlave">
+                  <PlusOutlined />
+                  Add Host
+                </a-button>
+              </a-form-item>
+            </a-form-item>
+          </a-col>
+        </a-row>
         <a-row :gutter="16">
-          <a-col :span="8">
+          <a-col auto-size>
             <a-form-item label="registry" name="registry">
               <a-select
                   v-model:value="cluster.registry"
@@ -120,12 +164,13 @@
             </a-form-item>
           </a-col>
         </a-row>
-      </a-form>
+      </a-form-model>
     </div>
   </a-modal>
 </template>
 
 <script >
+
 import { SearchOutlined, ExclamationCircleOutlined, MinusCircleOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import {defineComponent, reactive, ref} from 'vue';
 import { queryCluster } from '../api/cluster';
@@ -165,6 +210,19 @@ export default defineComponent({
     },
     addMaster(){
       this.cluster.master.push({
+        ip: "",
+        password: "",
+        port: 22}
+      );
+    },
+    removeSlave(item) {
+      let index = this.cluster.slaveNode.indexOf(item);
+      if (index !== -1) {
+        this.cluster.slaveNode.splice(index, 1);
+      }
+    },
+    addSlave(){
+      this.cluster.slaveNode.push({
         ip: "",
         password: "",
         port: 22}
