@@ -2,10 +2,10 @@ basePath: /api
 definitions:
   app.Response:
     properties:
+      code:
+        type: integer
       data:
         type: object
-      eventCode:
-        type: integer
       resMsg:
         type: object
     type: object

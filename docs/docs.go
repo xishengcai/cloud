@@ -172,11 +172,11 @@ var doc = `{
         "app.Response": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "integer"
+                },
                 "data": {
                     "type": "object"
-                },
-                "eventCode": {
-                    "type": "integer"
                 },
                 "resMsg": {
                     "type": "object"
