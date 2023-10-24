@@ -7,7 +7,6 @@ func Register(baseGroup *gin.RouterGroup) {
 	//router.GET("/",List)
 	router.GET("", List)
 	router.POST("", Install)
-	router.POST("/slaves", InstallKubernetesSlave)
-	router.POST("/joinMaster", JoinMaster)
+	router.POST("/nodes", JoinNodes)
 	router.POST("/upgrade", Upgrade)
 }

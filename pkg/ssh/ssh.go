@@ -5,14 +5,9 @@ import (
 	"net"
 	"time"
 
-	"k8s.io/klog/v2"
-
-	"github.com/xishengcai/cloud/models"
-
-	"github.com/pkg/errors"
-
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
+	"k8s.io/klog/v2"
 )
 
 // getConfigByPassword 通过用户名和密码生成一个配置文件
@@ -62,23 +57,16 @@ func CopyByteToRemote(client *ssh.Client, byteStream []byte, remoteFilePath stri
 		_ = dstFile.Close()
 	}()
 	_, err = dstFile.Write(byteStream)
-	if err != nil {
-		return err
-	}
-	klog.Info("copy byteStream to remote server finished!")
-	return nil
+	return err
 }
 
-// GetClient 通过ssh.ClientConfig创建一个ssh连接
-func GetClient(host models.Host) (*ssh.Client, error) {
-	klog.InfoS("host message", "host", host, "user", host.User, "password", host.Password, "port", host.Port)
-	addr := fmt.Sprintf("%s:%d", host.IP, host.Port)
-	sshConfig := getConfigByPassword(host.User, host.Password, time.Second*5)
+func GetClient(ip, user, password string, port int) (*ssh.Client, error) {
+	klog.InfoS("host message", "ip", ip, "user", user, "password", password, "port", port)
+	addr := fmt.Sprintf("%s:%d", ip, port)
+	sshConfig := getConfigByPassword(user, password, time.Second*5)
 	client, err := ssh.Dial("tcp", addr, sshConfig)
 	if err != nil {
-		return nil, errors.Wrap(err, "dial to host")
-	} else if client == nil {
-		return nil, errors.Wrap(err, "get ssh client")
+		klog.Error(err)
 	}
-	return client, nil
+	return client, err
 }

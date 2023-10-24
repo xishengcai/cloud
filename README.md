@@ -3,18 +3,18 @@
 - [x] install high available k8s masters
 - [x] batch install slaves
 - [] web terminal
-- [x] dashboard(angular)
+- [x] dashboard(vue)
 - [] support skip step, if docker already install
+- [] support that when task failed, retry from failed step
 
 ## swagger url
 - http://xxx:xxx/swagger/index.html
 
 ## post example
-### install master
+### install kubernetes
 ```json
 {
   "controlPlaneEndpoint": "string",
-  "dryRun": true,
   "master": [
     {
       "ip": "string",
@@ -28,7 +28,22 @@
   "podCidr": "10.244.0.0/16",
   "registry": "registry.aliyuncs.com/google_containers",
   "serviceCidr": "10.96.0.0/16",
-  "slaveNode": [
+  "version": "1.22.15",
+  "workNodes": [
+    {
+      "ip": "string",
+      "password": "string",
+      "port": 22,
+      "user": "root"
+    }
+  ]
+}
+```
+
+### join nodes
+```json
+{
+  "controllerNodes": [
     {
       "ip": "string",
       "password": "string",
@@ -36,36 +51,28 @@
       "user": "root"
     }
   ],
-  "version": "1.22.15"
+  "master": {
+    "ip": "string",
+    "password": "string",
+    "port": 22,
+    "user": "root"
+  },
+  "skip": {
+    "additionalProp1": true,
+    "additionalProp2": true,
+    "additionalProp3": true
+  },
+  "version": "string",
+  "workNodes": [
+    {
+      "ip": "string",
+      "password": "string",
+      "port": 22,
+      "user": "root"
+    }
+  ]
 }
-```
 
-### install slaves
-```json
-
-{
-  "version": "1.21.5",
-   "master":{
-      "ip":"9.16.0.27",
-      "password":"password",
-      "port":22,
-      "user":"root"
-   },
-   "nodes":[
-      {
-         "ip":"47.242.36.172",
-         "password":"password",
-         "port":22,
-         "user":"root"
-      },
-      {
-         "ip":"47.242.65.108",
-         "password":"password",
-         "port":22,
-         "user":"root"
-      }
-   ]
-}
 ```
 
 ### pull image and push to oss

@@ -46,7 +46,7 @@ func (u Upgrade) upgradeNodes() error {
 }
 
 func upgradeNode(host models.Host, version string, dryRun bool) error {
-	client, err := ssh.GetClient(host)
+	client, err := host.GetSSHClient()
 	if err != nil {
 		return err
 	}

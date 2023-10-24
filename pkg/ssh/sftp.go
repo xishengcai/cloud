@@ -2,7 +2,6 @@ package ssh
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
 	"path/filepath"
@@ -116,7 +115,7 @@ func CopyRemoteToLocal(sftpClient *sftp.Client, localFilePath string, remoteFile
 
 // ScpFile copy file local file to dest
 func ScpFile(path, dest string, client *ssh.Client) error {
-	b, err := ioutil.ReadFile(filepath.Clean(path))
+	b, err := os.ReadFile(filepath.Clean(path))
 	if err != nil {
 		return err
 	}

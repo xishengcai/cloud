@@ -22,26 +22,10 @@ definitions:
         default: root
         type: string
     type: object
-  cluster.InstallSlave:
-    properties:
-      dryRun:
-        type: boolean
-      master:
-        $ref: '#/definitions/models.Host'
-        type: object
-      nodes:
-        items:
-          $ref: '#/definitions/models.Host'
-        type: array
-      version:
-        type: string
-    type: object
   cluster.clusterParam:
     properties:
       controlPlaneEndpoint:
         type: string
-      dryRun:
-        type: boolean
       master:
         items:
           $ref: '#/definitions/cluster.Host'
@@ -62,17 +46,37 @@ definitions:
       serviceCidr:
         default: 10.96.0.0/16
         type: string
-      slaveNode:
-        items:
-          $ref: '#/definitions/cluster.Host'
-        type: array
       version:
         default: 1.22.15
         type: string
+      workNodes:
+        items:
+          $ref: '#/definitions/cluster.Host'
+        type: array
     required:
     - controlPlaneEndpoint
     - master
     - name
+    type: object
+  kubernetes.JoinNodes:
+    properties:
+      controllerNodes:
+        items:
+          $ref: '#/definitions/models.Host'
+        type: array
+      master:
+        $ref: '#/definitions/models.Host'
+        type: object
+      skip:
+        additionalProperties:
+          type: boolean
+        type: object
+      version:
+        type: string
+      workNodes:
+        items:
+          $ref: '#/definitions/models.Host'
+        type: array
     type: object
   kubernetes.Upgrade:
     properties:
@@ -154,18 +158,18 @@ paths:
       summary: install cluster
       tags:
       - k8s cluster
-  /v1/cluster/slaves:
+  /v1/cluster/nodes:
     post:
       consumes:
       - application/json
-      description: install cluster slave
+      description: install k8s nodes
       parameters:
       - description: install cluster slave
         in: body
         name: cluster
         required: true
         schema:
-          $ref: '#/definitions/cluster.InstallSlave'
+          $ref: '#/definitions/kubernetes.JoinNodes'
       produces:
       - application/json
       responses:
@@ -173,7 +177,7 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/app.Response'
-      summary: install cluster slave
+      summary: install cluster nodes
       tags:
       - k8s cluster
   /v1/cluster/upgrade:

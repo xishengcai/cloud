@@ -41,17 +41,17 @@ func List(ctx *gin.Context) {
 	})
 }
 
-// InstallKubernetesSlave godoc
-// @Summary install cluster slave
-// @Description install cluster slave
+// JoinNodes godoc
+// @Summary install cluster nodes
+// @Description install k8s nodes
 // @Tags k8s cluster
 // @Accept  json
 // @Produce  json
-// @Param cluster body InstallSlave true "install cluster slave"
+// @Param cluster body kubernetes.JoinNodes true "install cluster slave"
 // @Failure 201 {object} app.Response
-// @Router /v1/cluster/slaves [post]
-func InstallKubernetesSlave(ctx *gin.Context) {
-	k := &kubernetes.InstallSlave{}
+// @Router /v1/cluster/nodes [post]
+func JoinNodes(ctx *gin.Context) {
+	k := &kubernetes.JoinNodes{}
 	app.HandleOperator(ctx, k, func(o app.Operator) {
 		app.HandleServiceResult(ctx, o.Run())
 	})
@@ -63,13 +63,6 @@ type InstallSlave struct {
 	Master  models.Host   `json:"master"`
 	Version string        `json:"version"`
 	DryRun  bool          `json:"dryRun,omitempty"`
-}
-
-func JoinMaster(ctx *gin.Context) {
-	k := &kubernetes.JoinMaster{}
-	app.HandleOperator(ctx, k, func(o app.Operator) {
-		app.HandleServiceResult(ctx, o.Run())
-	})
 }
 
 // Upgrade godoc

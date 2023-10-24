@@ -49,10 +49,7 @@ func MergeError(errs []error) error {
 	}
 	var msg strings.Builder
 	for index, item := range errs {
-		if index != 0 {
-			msg.Write([]byte("\n"))
-		}
-		msg.Write([]byte(item.Error()))
+		msg.Write([]byte(fmt.Sprintf("%d :, %v", index, item)))
 	}
 	return fmt.Errorf(msg.String())
 }

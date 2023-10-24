@@ -2,7 +2,6 @@ package cluster
 
 type clusterParam struct {
 	Cluster
-	DryRun bool `json:"dryRun"`
 }
 type Cluster struct {
 	ID          string `bson:"_id" json:"-"`
@@ -15,7 +14,7 @@ type Cluster struct {
 	ControlPlaneEndpoint string `bson:"controlPlaneEndpoint" json:"controlPlaneEndpoint" validate:"required"`
 	PodCidr              string `bson:"podCidr" json:"podCidr" default:"10.244.0.0/16"`
 	ServiceCidr          string `bson:"serviceCidr" json:"serviceCidr" default:"10.96.0.0/16"`
-	SlaveNode            []Host `bson:"slaveNode" json:"slaveNode"`
+	WorkNodes            []Host `bson:"workNodes" json:"workNodes"`
 }
 
 type Host struct {

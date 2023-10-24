@@ -173,7 +173,7 @@
 
 import { SearchOutlined, ExclamationCircleOutlined, MinusCircleOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import {defineComponent, reactive, ref} from 'vue';
-import { queryCluster } from '../api/cluster';
+import { queryCluster,createCluster } from '../api/cluster';
 export default defineComponent({
   components:{
     SearchOutlined
@@ -187,6 +187,11 @@ export default defineComponent({
       queryCluster(param).then((res) => {
         console.log(res.data)
         this.data = res.data
+      })
+    },
+    clusterCreate(){
+      createCluster(this.cluster).then((res) => {
+
       })
     },
     onSearch(){},

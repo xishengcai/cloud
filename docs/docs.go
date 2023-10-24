@@ -99,9 +99,9 @@ var doc = `{
                 }
             }
         },
-        "/v1/cluster/slaves": {
+        "/v1/cluster/nodes": {
             "post": {
-                "description": "install cluster slave",
+                "description": "install k8s nodes",
                 "consumes": [
                     "application/json"
                 ],
@@ -111,7 +111,7 @@ var doc = `{
                 "tags": [
                     "k8s cluster"
                 ],
-                "summary": "install cluster slave",
+                "summary": "install cluster nodes",
                 "parameters": [
                     {
                         "description": "install cluster slave",
@@ -119,7 +119,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/cluster.InstallSlave"
+                            "$ref": "#/definitions/kubernetes.JoinNodes"
                         }
                     }
                 ],
@@ -202,27 +202,6 @@ var doc = `{
                 }
             }
         },
-        "cluster.InstallSlave": {
-            "type": "object",
-            "properties": {
-                "dryRun": {
-                    "type": "boolean"
-                },
-                "master": {
-                    "type": "object",
-                    "$ref": "#/definitions/models.Host"
-                },
-                "nodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Host"
-                    }
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
         "cluster.clusterParam": {
             "type": "object",
             "required": [
@@ -233,9 +212,6 @@ var doc = `{
             "properties": {
                 "controlPlaneEndpoint": {
                     "type": "string"
-                },
-                "dryRun": {
-                    "type": "boolean"
                 },
                 "master": {
                     "type": "array",
@@ -264,15 +240,45 @@ var doc = `{
                     "type": "string",
                     "default": "10.96.0.0/16"
                 },
-                "slaveNode": {
+                "version": {
+                    "type": "string",
+                    "default": "1.22.15"
+                },
+                "workNodes": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/cluster.Host"
                     }
+                }
+            }
+        },
+        "kubernetes.JoinNodes": {
+            "type": "object",
+            "properties": {
+                "controllerNodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Host"
+                    }
+                },
+                "master": {
+                    "type": "object",
+                    "$ref": "#/definitions/models.Host"
+                },
+                "skip": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "boolean"
+                    }
                 },
                 "version": {
-                    "type": "string",
-                    "default": "1.22.15"
+                    "type": "string"
+                },
+                "workNodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Host"
+                    }
                 }
             }
         },

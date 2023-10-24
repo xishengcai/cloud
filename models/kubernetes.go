@@ -12,10 +12,5 @@ type Cluster struct {
 	ControlPlaneEndpoint string `bson:"controlPlaneEndpoint" json:"controlPlaneEndpoint" validate:"required"`
 	PodCidr              string `bson:"podCidr" json:"podCidr" default:"10.244.0.0/16"`
 	ServiceCidr          string `bson:"serviceCidr" json:"serviceCidr" default:"10.96.0.0/16"`
-	SlaveNode            []Host `bson:"slaveNode" json:"slaveNode"`
-}
-
-// Version cluster version
-type Version struct {
-	Version string `form:"version" default:"1.22.15"`
+	WorkNodes            []Host `bson:"workNodes" json:"slaveNode"`
 }

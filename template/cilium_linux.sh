@@ -17,16 +17,19 @@ kernel_v3=`echo $kernel | cut -d "." -f 3`
 echo `uname -r`
 if [[ $kernel_v1 -lt 4 ]];then
   echo "$kernel 版本低于 4.9.17"
+  sh upgrade_kernel.sh
   exit 1
 fi
 
-if [[ $kernel_v2 -lt 9 ]];then
+if [[ $kernel_v1 -lt 4 ]] && [[ $kernel_v2 -lt 9 ]];then
   echo "$kernel 版本低于 4.9.17"
+  sh upgrade_kernel.sh
   exit 1
 fi
 
-if [[ $kernel_v2 -eq 9 ]] &&  [[ $kernel_v3 -lt 17 ]];then
+if [[ $kernel_v1 -lt 4 ]] && [[ $kernel_v2 -eq 9 ]] &&  [[ $kernel_v3 -lt 17 ]];then
   echo "$kernel 版本低于 4.9.17"
+  sh upgrade_kernel.sh
   exit 1
 fi
 

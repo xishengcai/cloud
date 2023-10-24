@@ -3,7 +3,8 @@ package docker
 import (
 	"fmt"
 
-	"github.com/xishengcai/cloud/models"
+	ssh2 "golang.org/x/crypto/ssh"
+
 	"github.com/xishengcai/cloud/pkg/ssh"
 
 	"k8s.io/klog/v2"
@@ -14,26 +15,17 @@ const (
 	InstallDockerScriptTpl = "./template/install_docker.sh"
 )
 
-func InstallDocker(host models.Host, dryRun bool) (err error) {
-	client, err := ssh.GetClient(host)
-	if err != nil {
-		return fmt.Errorf("nodes: %s, %v", host.IP, err)
+func InstallDocker(client *ssh2.Client) (err error) {
+	if err := ssh.ScpFile(InstallDockerScriptTpl, InstallDockerScript, client); err != nil {
+		return fmt.Errorf("nodes: %s, %v", client.RemoteAddr(), err)
 	}
-
-	if err := ssh.ScpFile(InstallDockerScriptTpl,
-		InstallDockerScript, client); err != nil {
-		return fmt.Errorf("nodes: %s, %v", host.IP, err)
-	}
-
-	if dryRun {
-		return nil
-	}
+	klog.Infof("copy %s to remote server finished!", InstallDockerScriptTpl)
 
 	b, err := ssh.ExecCmd(client, "sh /root/install_docker.sh")
 	if err != nil {
-		return fmt.Errorf("nodes: %s, %v", host.IP, err)
+		return fmt.Errorf("nodes: %s, %v", client.RemoteAddr(), err)
 	}
 	klog.Infof("install docker resp: %s", string(b))
-	klog.Infof("nodes: %s, install docker success", host.IP)
+	klog.Infof("nodes: %s, install docker success", client.RemoteAddr())
 	return nil
 }
