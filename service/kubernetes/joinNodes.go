@@ -2,7 +2,6 @@ package kubernetes
 
 import (
 	"fmt"
-	"sync"
 
 	ssh2 "golang.org/x/crypto/ssh"
 
@@ -10,7 +9,6 @@ import (
 
 	"github.com/xishengcai/cloud/models"
 	"github.com/xishengcai/cloud/pkg/app"
-	"github.com/xishengcai/cloud/pkg/e"
 	"github.com/xishengcai/cloud/service/docker"
 )
 
@@ -25,7 +23,6 @@ type JoinNodes struct {
 	ControllerNodes       []models.Host `json:"controllerNodes"`
 	Master                models.Host   `json:"master"`
 	Version               string        `json:"-"`
-	Skip                  map[step]bool `json:"skip"`
 	JoinWorkNodeCommand   string        `json:"-"`
 	JoinControllerCommand string        `json:"-"`
 }
@@ -44,10 +41,7 @@ func (i *JoinNodes) startJob() {
 		klog.Error(err)
 		return
 	}
-	err = i.join()
-	if err != nil {
-		klog.Error(err)
-	}
+	i.join()
 }
 
 func (i *JoinNodes) Validate() error {
@@ -71,28 +65,22 @@ func (i *JoinNodes) setJoinCommand() error {
 	return err
 }
 
-func (i *JoinNodes) join() (err error) {
-	var errorList []error
-	wg := sync.WaitGroup{}
-	wg.Add(len(i.WorkNodes) + len(i.ControllerNodes))
+func (i *JoinNodes) join() {
 	for _, node := range i.WorkNodes {
 		go func(host models.Host) {
-			defer wg.Done()
 			client, err := host.GetSSHClient()
 			if err != nil {
-				errorList = append(errorList, err)
+				klog.Error(err)
 				return
 			}
-			if !i.Skip[stepInstallDocker] {
-				err = docker.InstallDocker(client)
-				if err != nil {
-					errorList = append(errorList, err)
-					return
-				}
+			err = docker.InstallDocker(client)
+			if err != nil {
+				klog.Error(err)
+				return
 			}
 			err = joinNode(client, i.Version, i.JoinWorkNodeCommand)
 			if err != nil {
-				errorList = append(errorList, err)
+				klog.Error(err)
 				return
 			}
 			klog.Infof("node: %s join kubernetes success", host.IP)
@@ -102,29 +90,19 @@ func (i *JoinNodes) join() (err error) {
 	// wait until
 	for _, node := range i.ControllerNodes {
 		go func(host models.Host) {
-			defer wg.Done()
 			client, err := host.GetSSHClient()
 			if err != nil {
-				errorList = append(errorList, err)
+				klog.Error(err)
 				return
-			}
-			if !i.Skip[stepInstallDocker] {
-				err = docker.InstallDocker(client)
-				if err != nil {
-					errorList = append(errorList, err)
-					return
-				}
 			}
 			err = joinNode(client, i.Version, i.JoinControllerCommand)
 			if err != nil {
-				errorList = append(errorList, err)
+				klog.Error(err)
 				return
 			}
 			klog.Infof("node: %s join kubernetes success", host.IP)
 		}(node)
 	}
-	wg.Wait()
-	return e.MergeError(errorList)
 }
 
 func joinNode(client *ssh2.Client, version, joinCmd string) (err error) {

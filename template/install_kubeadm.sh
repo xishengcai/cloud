@@ -4,6 +4,16 @@
 #chec user
 [[ $UID -ne 0 ]] && { echo "Must run in root user !";exit; }
 
+export VERSION=`kubeadm version -o=short`
+if [[ $VERSION == "v{{.Version}}" ]];then
+  echo "kubeadm already install"
+  set -e
+  rm -rf /etc/cni/net.d
+  rm -rf /etc/kubernetes
+  rm -rf /var/lib/etcd
+  kubeadm reset --force
+  exit 0
+fi
 set -e
 
 echo "添加kubernetes国内yum源"

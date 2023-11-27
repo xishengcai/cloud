@@ -109,3 +109,14 @@ func getJoinWorkNodeCommand(client *ssh2.Client) (string, error) {
 	klog.Infof("node join command: %s", cmd)
 	return cmd, nil
 }
+
+func getJoinNodeCommand(client *ssh2.Client) (string, error) {
+	b, err := ssh.ExecCmd(client, "kubeadm token create --print-join-command")
+	if err != nil {
+		return "", err
+	}
+	cmdStr := string(b)
+	cmd := cmdStr[strings.Index(cmdStr, "kubeadm join"):]
+	klog.Infof("node join command: %s", cmd)
+	return cmd, nil
+}

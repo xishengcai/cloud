@@ -55,12 +55,10 @@ func (i *Cluster) install() error {
 		return err
 	}
 
-	if !i.Skip[stepInstallDocker] {
-		err = docker.InstallDocker(client)
-		if err != nil {
-			klog.Errorf("install docker failed: %v", err)
-			return err
-		}
+	err = docker.InstallDocker(client)
+	if err != nil {
+		klog.Errorf("install docker failed: %v", err)
+		return err
 	}
 
 	err = i.InstallMaster(client)
@@ -90,9 +88,10 @@ func (i *Cluster) startJob() {
 		klog.Errorf("install master failed: %v", err)
 		return
 	}
-
-	nodes := i.NewJoinNodes()
-	nodes.startJob()
+	if len(i.WorkNodes) > 0 {
+		nodes := i.NewJoinNodes()
+		nodes.startJob()
+	}
 }
 
 // InstallMaster kube init by kubeadm_config, or join k8s as master role

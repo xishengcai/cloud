@@ -23,6 +23,7 @@ func InstallDocker(client *ssh2.Client) (err error) {
 
 	b, err := ssh.ExecCmd(client, "sh /root/install_docker.sh")
 	if err != nil {
+		klog.Infof(string(b))
 		return fmt.Errorf("nodes: %s, %v", client.RemoteAddr(), err)
 	}
 	klog.Infof("install docker resp: %s", string(b))
