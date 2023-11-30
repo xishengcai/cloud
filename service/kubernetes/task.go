@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	ssh "golang.org/x/crypto/ssh"
+	"golang.org/x/net/context"
 
 	"github.com/xishengcai/cloud/service/docker"
 )
@@ -27,5 +28,7 @@ type TaskInstallNetPlug struct {
 }
 
 func (t TaskInstallDocker) Run() error {
-	return docker.InstallDocker(t.client)
+	ctx, cancel := context.WithTimeout(context.TODO(), installDockerTimeOut)
+	defer cancel()
+	return docker.InstallDocker(ctx, t.client)
 }

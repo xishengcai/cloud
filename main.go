@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net/http"
 	"os"
@@ -8,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"k8s.io/klog/v2"
 
 	"github.com/xishengcai/cloud/pkg/setting"
 	"github.com/xishengcai/cloud/routers"
@@ -32,6 +34,8 @@ import (
 // @name Authorization
 
 func main() {
+	klog.InitFlags(flag.CommandLine)
+	flag.Parse()
 	gin.SetMode(setting.Config.RunMode)
 	//db.InitMysql()
 

@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"fmt"
+	"time"
 
 	ssh2 "golang.org/x/crypto/ssh"
 	"golang.org/x/net/context"
@@ -20,6 +21,10 @@ const (
 	upgradeKubelet            = "./template/upgrade_nodes.sh"
 	ciliumLinuxTpl            = "./template/cilium_linux.sh"
 	upgradeKernelShell        = "./template/upgrade_kernel.sh"
+)
+
+var (
+	installDockerTimeOut = time.Second * 160
 )
 
 // Cluster implement install k8s master and slave
@@ -55,7 +60,9 @@ func (i *Cluster) install() error {
 		return err
 	}
 
-	err = docker.InstallDocker(client)
+	ctx, cancel := context.WithTimeout(context.TODO(), installDockerTimeOut)
+	defer cancel()
+	err = docker.InstallDocker(ctx, client)
 	if err != nil {
 		klog.Errorf("install docker failed: %v", err)
 		return err
@@ -70,14 +77,15 @@ func (i *Cluster) install() error {
 	return err
 }
 
+// NewJoinNodes 构建JoinNodes，包括其他控制节点和工作节点
 func (i *Cluster) NewJoinNodes() JoinNodes {
 	jn := JoinNodes{
-		WorkNodes: i.WorkNodes,
-		Master:    i.Master[0],
-		Version:   i.Version,
-	}
-	for _, x := range i.Master {
-		jn.ControllerNodes = append(jn.ControllerNodes, x)
+		WorkNodes:             i.WorkNodes,
+		ControllerNodes:       i.Master[1:],
+		Master:                i.Master[0],
+		Version:               i.Version,
+		JoinControllerCommand: i.JoinControllerCommand,
+		JoinWorkNodeCommand:   i.JoinWorkNodeCommand,
 	}
 	return jn
 }
@@ -88,10 +96,8 @@ func (i *Cluster) startJob() {
 		klog.Errorf("install master failed: %v", err)
 		return
 	}
-	if len(i.WorkNodes) > 0 {
-		nodes := i.NewJoinNodes()
-		nodes.startJob()
-	}
+	nodes := i.NewJoinNodes()
+	nodes.startJob()
 }
 
 // InstallMaster kube init by kubeadm_config, or join k8s as master role
@@ -108,6 +114,7 @@ func (i *Cluster) InstallMaster(client *ssh2.Client) (err error) {
 		fmt.Sprintf(`sh %s`, targetFile(installKubeletTpl)),
 		fmt.Sprintf(`sh %s`, targetFile(installK8sMasterScriptTpl)),
 		fmt.Sprintf(`cat %s`, "/root/.kube/config"),
+		fmt.Sprintf(`sh %s`, targetFile(ciliumLinuxTpl)),
 	}
 	if err := executeCmd(client, commands); err != nil {
 		return err

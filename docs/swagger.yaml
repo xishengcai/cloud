@@ -9,55 +9,6 @@ definitions:
       resMsg:
         type: object
     type: object
-  cluster.Host:
-    properties:
-      ip:
-        type: string
-      password:
-        type: string
-      port:
-        default: 22
-        type: integer
-      user:
-        default: root
-        type: string
-    type: object
-  cluster.clusterParam:
-    properties:
-      controlPlaneEndpoint:
-        type: string
-      master:
-        items:
-          $ref: '#/definitions/cluster.Host'
-        type: array
-      name:
-        default: test
-        type: string
-      networkPlug:
-        default: cilium
-        type: string
-      podCidr:
-        default: 10.244.0.0/16
-        type: string
-      registry:
-        default: registry.aliyuncs.com/google_containers
-        description: registry.aliyuncs.com/google_containers， k8s.gcr.io
-        type: string
-      serviceCidr:
-        default: 10.96.0.0/16
-        type: string
-      version:
-        default: 1.22.15
-        type: string
-      workNodes:
-        items:
-          $ref: '#/definitions/cluster.Host'
-        type: array
-    required:
-    - controlPlaneEndpoint
-    - master
-    - name
-    type: object
   kubernetes.JoinNodes:
     properties:
       controllerNodes:
@@ -67,12 +18,6 @@ definitions:
       master:
         $ref: '#/definitions/models.Host'
         type: object
-      skip:
-        additionalProperties:
-          type: boolean
-        type: object
-      version:
-        type: string
       workNodes:
         items:
           $ref: '#/definitions/models.Host'
@@ -88,6 +33,43 @@ definitions:
         type: array
       version:
         type: string
+    type: object
+  models.Cluster:
+    properties:
+      controlPlaneEndpoint:
+        type: string
+      id:
+        type: string
+      master:
+        items:
+          $ref: '#/definitions/models.Host'
+        type: array
+      name:
+        default: test
+        type: string
+      networkPlug:
+        default: cilium
+        type: string
+      podCidr:
+        default: 10.244.0.0/16
+        type: string
+      registry:
+        default: registry.aliyuncs.com/google_containers
+        type: string
+      serviceCidr:
+        default: 10.96.0.0/16
+        type: string
+      version:
+        default: 1.22.15
+        type: string
+      workNodes:
+        items:
+          $ref: '#/definitions/models.Host'
+        type: array
+    required:
+    - controlPlaneEndpoint
+    - master
+    - name
     type: object
   models.Host:
     properties:
@@ -147,7 +129,7 @@ paths:
         name: cluster
         required: true
         schema:
-          $ref: '#/definitions/cluster.clusterParam'
+          $ref: '#/definitions/models.Cluster'
       produces:
       - application/json
       responses:

@@ -1,8 +1,5 @@
 package cluster
 
-type clusterParam struct {
-	Cluster
-}
 type Cluster struct {
 	ID          string `bson:"_id" json:"-"`
 	Name        string `bson:"name" json:"name" validate:"required" default:"test"`

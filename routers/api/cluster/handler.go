@@ -14,7 +14,7 @@ import (
 // @Tags k8s cluster
 // @Accept  json
 // @Produce  json
-// @Param cluster body clusterParam true "install cluster"
+// @Param cluster body models.Cluster true "install cluster"
 // @Failure 201 {object} app.Response
 // @Router /v1/cluster [post]
 func Install(ctx *gin.Context) {

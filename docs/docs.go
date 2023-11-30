@@ -85,7 +85,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/cluster.clusterParam"
+                            "$ref": "#/definitions/models.Cluster"
                         }
                     }
                 ],
@@ -183,75 +183,6 @@ var doc = `{
                 }
             }
         },
-        "cluster.Host": {
-            "type": "object",
-            "properties": {
-                "ip": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "port": {
-                    "type": "integer",
-                    "default": 22
-                },
-                "user": {
-                    "type": "string",
-                    "default": "root"
-                }
-            }
-        },
-        "cluster.clusterParam": {
-            "type": "object",
-            "required": [
-                "controlPlaneEndpoint",
-                "master",
-                "name"
-            ],
-            "properties": {
-                "controlPlaneEndpoint": {
-                    "type": "string"
-                },
-                "master": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/cluster.Host"
-                    }
-                },
-                "name": {
-                    "type": "string",
-                    "default": "test"
-                },
-                "networkPlug": {
-                    "type": "string",
-                    "default": "cilium"
-                },
-                "podCidr": {
-                    "type": "string",
-                    "default": "10.244.0.0/16"
-                },
-                "registry": {
-                    "description": "registry.aliyuncs.com/google_containers， k8s.gcr.io",
-                    "type": "string",
-                    "default": "registry.aliyuncs.com/google_containers"
-                },
-                "serviceCidr": {
-                    "type": "string",
-                    "default": "10.96.0.0/16"
-                },
-                "version": {
-                    "type": "string",
-                    "default": "1.22.15"
-                },
-                "workNodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/cluster.Host"
-                    }
-                }
-            }
-        },
         "kubernetes.JoinNodes": {
             "type": "object",
             "properties": {
@@ -264,15 +195,6 @@ var doc = `{
                 "master": {
                     "type": "object",
                     "$ref": "#/definitions/models.Host"
-                },
-                "skip": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "boolean"
-                    }
-                },
-                "version": {
-                    "type": "string"
                 },
                 "workNodes": {
                     "type": "array",
@@ -296,6 +218,58 @@ var doc = `{
                 },
                 "version": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Cluster": {
+            "type": "object",
+            "required": [
+                "controlPlaneEndpoint",
+                "master",
+                "name"
+            ],
+            "properties": {
+                "controlPlaneEndpoint": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "master": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Host"
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "default": "test"
+                },
+                "networkPlug": {
+                    "type": "string",
+                    "default": "cilium"
+                },
+                "podCidr": {
+                    "type": "string",
+                    "default": "10.244.0.0/16"
+                },
+                "registry": {
+                    "type": "string",
+                    "default": "registry.aliyuncs.com/google_containers"
+                },
+                "serviceCidr": {
+                    "type": "string",
+                    "default": "10.96.0.0/16"
+                },
+                "version": {
+                    "type": "string",
+                    "default": "1.22.15"
+                },
+                "workNodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Host"
+                    }
                 }
             }
         },

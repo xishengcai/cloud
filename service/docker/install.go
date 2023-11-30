@@ -2,8 +2,10 @@ package docker
 
 import (
 	"fmt"
+	"time"
 
 	ssh2 "golang.org/x/crypto/ssh"
+	"golang.org/x/net/context"
 
 	"github.com/xishengcai/cloud/pkg/ssh"
 
@@ -15,18 +17,26 @@ const (
 	InstallDockerScriptTpl = "./template/install_docker.sh"
 )
 
-func InstallDocker(client *ssh2.Client) (err error) {
+func InstallDocker(ctx context.Context, client *ssh2.Client) (err error) {
 	if err := ssh.ScpFile(InstallDockerScriptTpl, InstallDockerScript, client); err != nil {
-		return fmt.Errorf("nodes: %s, %v", client.RemoteAddr(), err)
+		return err
 	}
-	klog.Infof("copy %s to remote server finished!", InstallDockerScriptTpl)
-
-	b, err := ssh.ExecCmd(client, "sh /root/install_docker.sh")
-	if err != nil {
-		klog.Infof(string(b))
-		return fmt.Errorf("nodes: %s, %v", client.RemoteAddr(), err)
+	var b []byte
+	go func() {
+		b, err = ssh.ExecCmd(client, "sh /root/install_docker.sh")
+	}()
+	for {
+		select {
+		case <-ctx.Done():
+			return fmt.Errorf("安装docker 超时，160秒")
+		default:
+			if err != nil || len(b) > 0 {
+				klog.Infof("install docker resp: %s", string(b))
+				klog.Infof("nodes: %s, install docker success", client.RemoteAddr())
+				return
+			}
+			time.Sleep(time.Second * 10)
+			klog.Infof("nodes: %s, installing docker ....", client.RemoteAddr())
+		}
 	}
-	klog.Infof("install docker resp: %s", string(b))
-	klog.Infof("nodes: %s, install docker success", client.RemoteAddr())
-	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	ssh2 "golang.org/x/crypto/ssh"
+	"golang.org/x/net/context"
 
 	"k8s.io/klog/v2"
 
@@ -49,6 +50,10 @@ func (i *JoinNodes) Validate() error {
 }
 
 func (i *JoinNodes) setJoinCommand() error {
+	// 如果是和master 一起安装，无需再次登陆获取
+	if i.JoinWorkNodeCommand != "" {
+		return nil
+	}
 	client, err := i.Master.GetSSHClient()
 	if err != nil {
 		return err
@@ -73,7 +78,9 @@ func (i *JoinNodes) join() {
 				klog.Error(err)
 				return
 			}
-			err = docker.InstallDocker(client)
+			ctx, cancel := context.WithTimeout(context.TODO(), installDockerTimeOut)
+			defer cancel()
+			err = docker.InstallDocker(ctx, client)
 			if err != nil {
 				klog.Error(err)
 				return
