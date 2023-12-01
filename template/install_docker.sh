@@ -37,8 +37,8 @@ cat > /etc/docker/daemon.json <<EOF
   "live-restore": true,
   "log-driver": "json-file",
   "log-opts": {
-    "max-size": "100m"，
-    "max-file":
+    "max-size": "10m",
+    "max-file": "3"
   },
   "registry-mirrors": ["https://wms804s3.mirror.aliyuncs.com"]
 }

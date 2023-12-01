@@ -60,9 +60,14 @@ downloadCilium(){
 
 installCilium(){
   helm repo add cilium https://helm.cilium.io/
+#  helm repo update
+  helm install cilium cilium/cilium --version 1.13.2 --namespace kube-system
+}
+
+installCiliumInner(){
+  helm repo add gt https://xisheng.vip:7445/
   helm repo update
-  helm install cilium cilium/cilium --version 1.13.2 \
-  --namespace kube-system
+  helm install cilium gt/cilium --version 1.14.4 --namespace kube-system
 }
 
 setBgpConfigMap(){
@@ -82,7 +87,7 @@ EOF
 }
 
 main(){
-  installCilium
+  installCiliumInner
 }
 
 main
