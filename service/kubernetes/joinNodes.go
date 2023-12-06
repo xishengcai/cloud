@@ -10,7 +10,14 @@ import (
 
 	"github.com/xishengcai/cloud/models"
 	"github.com/xishengcai/cloud/pkg/app"
+	"github.com/xishengcai/cloud/pkg/sshhelper"
 	"github.com/xishengcai/cloud/service/docker"
+)
+
+var (
+	joinNodeFileMap = map[string]string{
+		installKubeletTpl: "/root/install_kubeadm.sh",
+	}
 )
 
 // Version cluster version, used for shell template parser
@@ -111,14 +118,13 @@ func (i *JoinNodes) join() {
 		}(node)
 	}
 }
-
 func joinNode(client *ssh2.Client, version, joinCmd string) (err error) {
-	if err := scpData(client, Version{Version: version}, []string{installKubeletTpl}); err != nil {
+	if err := sshhelper.ScpData(client, Version{Version: version}, joinNodeFileMap); err != nil {
 		return err
 	}
 
 	commands := []string{
-		fmt.Sprintf(`sh %s`, targetFile(installKubeletTpl)),
+		fmt.Sprintf(`sh %s`, joinNodeFileMap[installKubeletTpl]),
 		joinCmd,
 	}
 	if err := executeCmd(client, commands); err != nil {

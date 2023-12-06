@@ -3,7 +3,7 @@ package models
 import (
 	ssh2 "golang.org/x/crypto/ssh"
 
-	"github.com/xishengcai/cloud/pkg/ssh"
+	"github.com/xishengcai/cloud/pkg/sshhelper"
 )
 
 type Host struct {
@@ -14,5 +14,5 @@ type Host struct {
 }
 
 func (h *Host) GetSSHClient() (*ssh2.Client, error) {
-	return ssh.GetClient(h.IP, "root", h.Password, h.Port)
+	return sshhelper.GetClient(h.IP, "root", h.Password, h.Port)
 }

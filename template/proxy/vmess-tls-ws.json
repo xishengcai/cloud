@@ -1,6 +1,6 @@
 {
   "inbounds": [{
-    "port": {{ .V2rayPort }},
+    "port": {{ .proxyPort }},
     "protocol": "vmess",
     "settings": {
       "clients": [

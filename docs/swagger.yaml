@@ -89,7 +89,7 @@ definitions:
       commonName:
         type: string
       externalPort:
-        description: used for nginx tls， listen to v2ray
+        description: used for nginx tls， listen to proxy
         type: integer
       ip:
         type: string
@@ -101,7 +101,7 @@ definitions:
       user:
         default: root
         type: string
-      v2rayPort:
+      proxyPort:
         type: integer
     type: object
 info:

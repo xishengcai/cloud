@@ -1,53 +1,19 @@
 package kubernetes
 
 import (
-	"bytes"
 	"fmt"
 	"strings"
-	"text/template"
 
 	ssh2 "golang.org/x/crypto/ssh"
 	"k8s.io/klog/v2"
 
-	"github.com/xishengcai/cloud/pkg/ssh"
+	"github.com/xishengcai/cloud/pkg/sshhelper"
 )
-
-func parserTemplate(scriptTpl string, data interface{}) ([]byte, error) {
-	t1, err := template.ParseFiles(scriptTpl)
-	if err != nil {
-		klog.Errorf("%s template parser failed, %v", scriptTpl, err)
-		return nil, err
-	}
-	buff1 := new(bytes.Buffer)
-
-	// 结构体数据映射到模版中
-	err = t1.Execute(buff1, data)
-	if err != nil {
-		klog.Errorf("execute template failed, %v", err)
-		return nil, err
-	}
-	return buff1.Bytes(), nil
-}
-
-// scpData use go text template, data is a struct object
-// temp is shell script, struct element use {{.Element}}
-func scpData(client *ssh2.Client, data interface{}, temp []string) error {
-	for _, t := range temp {
-		scriptBytes, err := parserTemplate(t, data)
-		if err != nil {
-			return err
-		}
-		if err := ssh.CopyByteToRemote(client, scriptBytes, targetFile(t)); err != nil {
-			return err
-		}
-	}
-	return nil
-}
 
 func executeCmd(client *ssh2.Client, commands []string) error {
 	for _, cmd := range commands {
 		klog.Infof("exec cmd %s", cmd)
-		b, err := ssh.ExecCmd(client, cmd)
+		b, err := sshhelper.ExecCmd(client, cmd)
 		klog.Infof("resp:  %s", string(b))
 		if err != nil {
 			klog.Errorf("ExecCmd failed, %v", err)
@@ -58,14 +24,9 @@ func executeCmd(client *ssh2.Client, commands []string) error {
 	return nil
 }
 
-func targetFile(tmp string) string {
-	t := strings.Split(tmp, "/")
-	return "/root/" + t[len(t)-1]
-}
-
 // getClusterVersion ssh to kubernetes master, get version
 func getClusterVersion(client *ssh2.Client) (string, error) {
-	b, err := ssh.ExecCmd(client, "kubectl version --short |grep Server")
+	b, err := sshhelper.ExecCmd(client, "kubectl version --short |grep Server")
 	if err != nil {
 		return "", err
 	}
@@ -89,7 +50,7 @@ func handCommandResult(result []byte) string {
 }
 
 func getJoinControllerNodeCommand(client *ssh2.Client, joinWorkNodeCommand string) (string, error) {
-	result, err := ssh.ExecCmd(client, "kubeadm init phase upload-certs --upload-certs | awk 'END {print}'")
+	result, err := sshhelper.ExecCmd(client, "kubeadm init phase upload-certs --upload-certs | awk 'END {print}'")
 	if err != nil {
 		return "", err
 	}
@@ -100,7 +61,7 @@ func getJoinControllerNodeCommand(client *ssh2.Client, joinWorkNodeCommand strin
 }
 
 func getJoinWorkNodeCommand(client *ssh2.Client) (string, error) {
-	b, err := ssh.ExecCmd(client, "kubeadm token create --print-join-command")
+	b, err := sshhelper.ExecCmd(client, "kubeadm token create --print-join-command")
 	if err != nil {
 		return "", err
 	}
@@ -111,7 +72,7 @@ func getJoinWorkNodeCommand(client *ssh2.Client) (string, error) {
 }
 
 func getJoinNodeCommand(client *ssh2.Client) (string, error) {
-	b, err := ssh.ExecCmd(client, "kubeadm token create --print-join-command")
+	b, err := sshhelper.ExecCmd(client, "kubeadm token create --print-join-command")
 	if err != nil {
 		return "", err
 	}

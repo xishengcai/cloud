@@ -7,9 +7,9 @@ import (
 	ssh2 "golang.org/x/crypto/ssh"
 	"golang.org/x/net/context"
 
-	"github.com/xishengcai/cloud/pkg/ssh"
-
 	"k8s.io/klog/v2"
+
+	"github.com/xishengcai/cloud/pkg/sshhelper"
 )
 
 const (
@@ -18,12 +18,12 @@ const (
 )
 
 func InstallDocker(ctx context.Context, client *ssh2.Client) (err error) {
-	if err := ssh.ScpFile(InstallDockerScriptTpl, InstallDockerScript, client); err != nil {
+	if err := sshhelper.ScpFile(InstallDockerScriptTpl, InstallDockerScript, client); err != nil {
 		return err
 	}
 	var b []byte
 	go func() {
-		b, err = ssh.ExecCmd(client, "sh /root/install_docker.sh")
+		b, err = sshhelper.ExecCmd(client, "sh /root/install_docker.sh")
 	}()
 	for {
 		select {

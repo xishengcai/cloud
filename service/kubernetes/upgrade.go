@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
+	"k8s.io/klog/v2"
+
 	"github.com/xishengcai/cloud/models"
 	"github.com/xishengcai/cloud/pkg/app"
-	"github.com/xishengcai/cloud/pkg/ssh"
-
-	"k8s.io/klog/v2"
+	"github.com/xishengcai/cloud/pkg/sshhelper"
 )
 
 type Upgrade struct {
@@ -73,7 +73,7 @@ systemctl daemon-reload
 systemctl restart kubelet
 `
 	script = strings.Replace(script, "{{.Version}}", version, -1)
-	if err := ssh.CopyByteToRemote(client, []byte(script), targetFile(upgradeKubelet)); err != nil {
+	if err := sshhelper.CopyByteToRemote(client, []byte(script), sshhelper.TargetFile(upgradeKubelet)); err != nil {
 		return err
 	}
 
@@ -81,7 +81,7 @@ systemctl restart kubelet
 		return nil
 	}
 	commands := []string{
-		fmt.Sprintf(`sh %s`, targetFile(upgradeKubelet)),
+		fmt.Sprintf(`sh %s`, sshhelper.TargetFile(upgradeKubelet)),
 	}
 	if err := executeCmd(client, commands); err != nil {
 		return err

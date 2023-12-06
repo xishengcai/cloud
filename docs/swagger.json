@@ -317,7 +317,7 @@
                     "type": "string"
                 },
                 "externalPort": {
-                    "description": "used for nginx tls， listen to v2ray",
+                    "description": "used for nginx tls， listen to proxy",
                     "type": "integer"
                 },
                 "ip": {
@@ -334,7 +334,7 @@
                     "type": "string",
                     "default": "root"
                 },
-                "v2rayPort": {
+                "proxyPort": {
                     "type": "integer"
                 }
             }

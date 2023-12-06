@@ -1,8 +1,11 @@
-package ssh
+package sshhelper
 
 import (
+	"bytes"
 	"fmt"
 	"net"
+	"strings"
+	"text/template"
 	"time"
 
 	"github.com/pkg/sftp"
@@ -69,4 +72,42 @@ func GetClient(ip, user, password string, port int) (*ssh.Client, error) {
 		klog.Error(err)
 	}
 	return client, err
+}
+
+// ScpData use go text template, data is a struct object
+// temp is shell script, struct element use {{.Element}}
+func ScpData(client *ssh.Client, data interface{}, pathMap map[string]string) error {
+	for k, v := range pathMap {
+		klog.Infof("srcPath: %s, destPath: %s", k, v)
+		scriptBytes, err := parserTemplate(k, data)
+		if err != nil {
+			return err
+		}
+		if err := CopyByteToRemote(client, scriptBytes, v); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func TargetFile(tmp string) string {
+	t := strings.Split(tmp, "/")
+	return "/root/" + t[len(t)-1]
+}
+
+func parserTemplate(scriptTpl string, data interface{}) ([]byte, error) {
+	t1, err := template.ParseFiles(scriptTpl)
+	if err != nil {
+		klog.Errorf("%s template parser failed, %v", scriptTpl, err)
+		return nil, err
+	}
+	buff1 := new(bytes.Buffer)
+
+	// 结构体数据映射到模版中
+	err = t1.Execute(buff1, data)
+	if err != nil {
+		klog.Errorf("execute template failed, %v", err)
+		return nil, err
+	}
+	return buff1.Bytes(), nil
 }

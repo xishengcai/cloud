@@ -12,6 +12,7 @@ import (
 	"github.com/xishengcai/cloud/models"
 	"github.com/xishengcai/cloud/pkg/app"
 	"github.com/xishengcai/cloud/pkg/common"
+	"github.com/xishengcai/cloud/pkg/sshhelper"
 	"github.com/xishengcai/cloud/service/docker"
 )
 
@@ -25,6 +26,13 @@ const (
 
 var (
 	installDockerTimeOut = time.Second * 160
+	clusterFileMap       = map[string]string{
+		installKubeletTpl:         "/root/install_kubeadm.sh",
+		installK8sMasterScriptTpl: "/root/install_k8s_master.sh",
+		upgradeKubelet:            "/root/upgradeKubelet",
+		ciliumLinuxTpl:            "/root/cilium_linux.sh",
+		upgradeKernelShell:        "/root/upgrade_kernel.sh",
+	}
 )
 
 // Cluster implement install k8s master and slave
@@ -102,19 +110,15 @@ func (i *Cluster) startJob() {
 
 // InstallMaster kube init by kubeadm_config, or join k8s as master role
 func (i *Cluster) InstallMaster(client *ssh2.Client) (err error) {
-	if err := scpData(client, i, []string{
-		installKubeletTpl,
-		installK8sMasterScriptTpl,
-		ciliumLinuxTpl,
-		upgradeKernelShell}); err != nil {
+	if err := sshhelper.ScpData(client, i, clusterFileMap); err != nil {
 		return err
 	}
 
 	commands := []string{
-		fmt.Sprintf(`sh %s`, targetFile(installKubeletTpl)),
-		fmt.Sprintf(`sh %s`, targetFile(installK8sMasterScriptTpl)),
+		fmt.Sprintf(`sh %s`, clusterFileMap[installKubeletTpl]),
+		fmt.Sprintf(`sh %s`, clusterFileMap[installK8sMasterScriptTpl]),
 		fmt.Sprintf(`cat %s`, "/root/.kube/config"),
-		fmt.Sprintf(`sh %s`, targetFile(ciliumLinuxTpl)),
+		fmt.Sprintf(`sh %s`, clusterFileMap[ciliumLinuxTpl]),
 	}
 	if err := executeCmd(client, commands); err != nil {
 		return err

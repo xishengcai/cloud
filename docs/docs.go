@@ -333,7 +333,7 @@ var doc = `{
                     "type": "string"
                 },
                 "externalPort": {
-                    "description": "used for nginx tls， listen to v2ray",
+                    "description": "used for nginx tls， listen to proxy",
                     "type": "integer"
                 },
                 "ip": {
@@ -350,7 +350,7 @@ var doc = `{
                     "type": "string",
                     "default": "root"
                 },
-                "v2rayPort": {
+                "proxyPort": {
                     "type": "integer"
                 }
             }
