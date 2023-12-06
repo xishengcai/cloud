@@ -166,6 +166,40 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/v1/proxy": {
+            "post": {
+                "description": "install proxy",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "proxy"
+                ],
+                "summary": "install proxy",
+                "parameters": [
+                    {
+                        "description": "install proxy",
+                        "name": "cluster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/proxy.Install"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -289,6 +323,35 @@ var doc = `{
                 "user": {
                     "type": "string",
                     "default": "root"
+                }
+            }
+        },
+        "proxy.Install": {
+            "type": "object",
+            "properties": {
+                "commonName": {
+                    "type": "string"
+                },
+                "externalPort": {
+                    "description": "used for nginx tls， listen to v2ray",
+                    "type": "integer"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer",
+                    "default": 22
+                },
+                "user": {
+                    "type": "string",
+                    "default": "root"
+                },
+                "v2rayPort": {
+                    "type": "integer"
                 }
             }
         }

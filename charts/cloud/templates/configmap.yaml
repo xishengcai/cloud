@@ -5,15 +5,24 @@ metadata:
 data:
   config.yaml: |-
     title: cloud
-    releaseEnv: local
-    version: "latest"
-    server:
-      local:
-        cloud:
-          port: 80
-          readTimeout: 60
-          writeTimeout: 60
-          runMode: debug
-        redis:
-          host: redis
-          port: 6379
+    version: "1.0"
+    runMode: debug
+    web:
+      port: 80
+      readTimeout:  60
+      writeTimeout: 60
+    mysql:
+      dbType: mysql
+      username: root
+      host: "localhost:3306"
+      password: 123456
+      dbName: drs
+      charset: utf8mb4
+      parseTime: true
+      maxIdleConnections: 10
+      maxOpenConnections: 30
+    mongodb:
+      address: localhost:27017
+      user: root
+      password: 123456
+      database: admin

@@ -84,6 +84,26 @@ definitions:
         default: root
         type: string
     type: object
+  proxy.Install:
+    properties:
+      commonName:
+        type: string
+      externalPort:
+        description: used for nginx tls， listen to v2ray
+        type: integer
+      ip:
+        type: string
+      password:
+        type: string
+      port:
+        default: 22
+        type: integer
+      user:
+        default: root
+        type: string
+      v2rayPort:
+        type: integer
+    type: object
 info:
   contact:
     email: support@swagger.io
@@ -184,6 +204,28 @@ paths:
       summary: upgrade k8s
       tags:
       - k8s cluster
+  /v1/proxy:
+    post:
+      consumes:
+      - application/json
+      description: install proxy
+      parameters:
+      - description: install proxy
+        in: body
+        name: cluster
+        required: true
+        schema:
+          $ref: '#/definitions/proxy.Install'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: install proxy
+      tags:
+      - proxy
 securityDefinitions:
   ApiKeyAuth:
     in: header
