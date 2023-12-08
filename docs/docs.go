@@ -330,11 +330,13 @@ var doc = `{
             "type": "object",
             "properties": {
                 "commonName": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "test.hello.com"
                 },
                 "externalPort": {
                     "description": "used for nginx tls， listen to proxy",
-                    "type": "integer"
+                    "type": "integer",
+                    "default": 20001
                 },
                 "ip": {
                     "type": "string"
@@ -346,12 +348,13 @@ var doc = `{
                     "type": "integer",
                     "default": 22
                 },
+                "proxyPort": {
+                    "type": "integer",
+                    "default": 20000
+                },
                 "user": {
                     "type": "string",
                     "default": "root"
-                },
-                "proxyPort": {
-                    "type": "integer"
                 }
             }
         }

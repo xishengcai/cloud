@@ -1,11 +1,12 @@
 #!/bin/bash
-#yum install nginx wget -y
+yum install nginx wget -y
 # 断点续传
 set -e
 wget -c https://github.com/xishengcai/cloud/releases/download/v1.0.0/proxy-server -O /usr/local/bin/proxy-server
 wget -c https://github.com/xishengcai/cloud/releases/download/v1.0.0/v2ctl  -O  /usr/local/bin/v2ctl
 chmod +x /usr/local/bin/proxy-server
 chmod +x /usr/local/bin/v2ctl
+chmod +x /usr/local/bin/gencert
 
 # 写入nginx 配置
 echo 'server {
@@ -83,7 +84,7 @@ echo '[Unit]
       [Install]
       WantedBy=multi-user.target' > /etc/systemd/system/proxy-server.service
 
-sh /root/gencert --CN {{ .CommonName }} --dir /opt/proxy-cert
+gencert --CN {{ .CommonName }} --dir /opt/proxy-cert
 systemctl daemon-reload
 systemctl start proxy-server
 systemctl start nginx

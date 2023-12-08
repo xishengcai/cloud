@@ -65,8 +65,8 @@ installCilium(){
 }
 
 installCiliumInner(){
-  helm repo add gt https://xisheng.vip:7445/
-  helm repo update
+#  helm repo add gt https://xisheng.vip:7445/
+#  helm repo update
   helm install cilium gt/cilium --version 1.14.4 --namespace kube-system
 }
 

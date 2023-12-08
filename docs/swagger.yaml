@@ -87,8 +87,10 @@ definitions:
   proxy.Install:
     properties:
       commonName:
+        default: test.hello.com
         type: string
       externalPort:
+        default: 20001
         description: used for nginx tls， listen to proxy
         type: integer
       ip:
@@ -98,11 +100,12 @@ definitions:
       port:
         default: 22
         type: integer
+      proxyPort:
+        default: 20000
+        type: integer
       user:
         default: root
         type: string
-      proxyPort:
-        type: integer
     type: object
 info:
   contact:

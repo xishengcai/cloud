@@ -83,6 +83,7 @@ func ScpData(client *ssh.Client, data interface{}, pathMap map[string]string) er
 		if err != nil {
 			return err
 		}
+		//klog.Infof("Path: %s , content: \r\n%s", v, string(scriptBytes))
 		if err := CopyByteToRemote(client, scriptBytes, v); err != nil {
 			return err
 		}

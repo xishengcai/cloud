@@ -18,16 +18,17 @@ checkNet(){
   fi
 }
 
-checkNet
+clean(){
+  set -e
 
-set -e
+  rm -rf /etc/cni/net.d
+  rm -rf /etc/kubernetes
+  rm -rf /var/lib/etcd
+  kubeadm reset --force
+}
 
-rm -rf /etc/cni/net.d
-rm -rf /etc/kubernetes
-rm -rf /var/lib/etcd
-kubeadm reset --force
-
-# https://pkg.go.dev/k8s.io/kubernetes@v1.17.2/cmd/kubeadm/app/apis/kubeadm/v1beta2
+install(){
+  # https://pkg.go.dev/k8s.io/kubernetes@v1.17.2/cmd/kubeadm/app/apis/kubeadm/v1beta2
 cat > kubeadm-config.yaml <<EOF
 apiVersion: kubeadm.k8s.io/v1beta2
 controlPlaneEndpoint: {{.ControlPlaneEndpoint}}
@@ -55,23 +56,46 @@ apiVersion: kubelet.config.k8s.io/v1beta1
 #  cpu.available: 300m
 EOF
 
-echo "kubeadm init"
-kubeadm init --config=/root/kubeadm-config.yaml --upload-certs
+  echo "kubeadm init"
+  kubeadm init --config=/root/kubeadm-config.yaml --upload-certs
 
-# To start using your cluster, you need to run the following as a regular user:
-mkdir -p /root/.kube
-\cp /etc/kubernetes/admin.conf /root/.kube/config
+  # To start using your cluster, you need to run the following as a regular user:
+  mkdir -p /root/.kube
+  \cp /etc/kubernetes/admin.conf /root/.kube/config
+}
 
 
-# install helm3
-if $isOuter; then
-  curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-  chmod 700 get_helm.sh
-  ./get_helm.sh
-else
-  curl -fsSl -o helm-canary-linux-amd64.tar.gz https://soft-package-xisheng.oss-cn-hangzhou.aliyuncs.com/k8s/helm-v3.9.3-linux-amd64.tar.gz
-  tar xzvf helm-canary-linux-amd64.tar.gz
-  mv linux-amd64/helm /usr/local/bin/
-fi
+installHelm(){
+  # install helm3
+  if $isOuter; then
+    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+    chmod 700 get_helm.sh
+    ./get_helm.sh
+  else
+    curl -fsSl -o helm-canary-linux-amd64.tar.gz https://soft-package-xisheng.oss-cn-hangzhou.aliyuncs.com/k8s/helm-v3.9.3-linux-amd64.tar.gz
+    tar xzvf helm-canary-linux-amd64.tar.gz
+    mv linux-amd64/helm /usr/local/bin/
+  fi
+}
 
-kubectl taint  nodes --all node-role.kubernetes.io/master-
+addRepo(){
+    gtRepoURL="https://xisheng.vip:7445"
+    repoCachePath="/root/.config/helm/repositories.yaml"
+    # 使用 -q 选项可以静默输出，只返回成功或失败状态
+    if helm repo list | grep -q "^gt$"; then
+      echo "gt repo exists"
+    else
+      helm repo add gt https://xisheng.vip:7445 --force-update
+    fi
+}
+
+main(){
+  checkNet
+  clean
+  install
+  installHelm
+  addRepo
+  kubectl taint  nodes --all node-role.kubernetes.io/master-
+}
+
+main

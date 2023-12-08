@@ -22,6 +22,7 @@ const (
 	upgradeKubelet            = "./template/upgrade_nodes.sh"
 	ciliumLinuxTpl            = "./template/cilium_linux.sh"
 	upgradeKernelShell        = "./template/upgrade_kernel.sh"
+	installK8sPlugin          = "./template/install_k8s_plugin.sh"
 )
 
 var (
@@ -29,9 +30,9 @@ var (
 	clusterFileMap       = map[string]string{
 		installKubeletTpl:         "/root/install_kubeadm.sh",
 		installK8sMasterScriptTpl: "/root/install_k8s_master.sh",
-		upgradeKubelet:            "/root/upgradeKubelet",
-		ciliumLinuxTpl:            "/root/cilium_linux.sh",
-		upgradeKernelShell:        "/root/upgrade_kernel.sh",
+		//upgradeKernelShell:        "/root/upgrade_kernel.sh",
+		ciliumLinuxTpl:   "/root/cilium_linux.sh",
+		installK8sPlugin: "/root/install_k8s_plugin.sh",
 	}
 )
 
@@ -119,6 +120,7 @@ func (i *Cluster) InstallMaster(client *ssh2.Client) (err error) {
 		fmt.Sprintf(`sh %s`, clusterFileMap[installK8sMasterScriptTpl]),
 		fmt.Sprintf(`cat %s`, "/root/.kube/config"),
 		fmt.Sprintf(`sh %s`, clusterFileMap[ciliumLinuxTpl]),
+		fmt.Sprintf(`sh %s`, clusterFileMap[installK8sPlugin]),
 	}
 	if err := executeCmd(client, commands); err != nil {
 		return err

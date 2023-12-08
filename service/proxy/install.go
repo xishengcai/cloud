@@ -13,18 +13,8 @@ import (
 )
 
 const (
-	proxyNgConfigDestPath = "/etc/nginx/proxy-1234.conf"
-	proxyNgConfigSrc      = "./template/proxy/proxy.conf"
-)
-
-const (
-	proxyVmessTLSWSConfigDestPath = "/root/vmess-tls-ws.json"
-	proxyVmessTLSWSConfigSrc      = "./template/proxy/vmess-tls-ws.json"
-)
-
-const (
 	certSrcPath          = "./template/gencert"
-	certDestPath         = "/root/gencert"
+	certDestPath         = "/usr/local/bin/gencert"
 	installProxyTpl      = "./template/proxy/install_proxy.sh"
 	installProxyDestPath = "/root/install_proxy.sh"
 )
