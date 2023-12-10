@@ -83,62 +83,123 @@
         </a-row>
         <a-row :gutter="80">
           <a-col auto-size>
-            <a-form-item label="添加 master 节点" >
+            <a-form-item label="添加控制节点" >
               <a-form-item>
 
               </a-form-item>
-              <a-form-item
+              <a-space
                   v-for="(host, index) in cluster.master"
-                  :key="host"
-                  v-bind="index === 0 ? formItemLayout : {}"
-                  :label="index === 0 ? 'host' : ''">
-                <a-form-item label="IP" name="IP">
+                  :key="host.id"
+                    style="display: flex; margin-bottom: 8px"
+                    align="baseline">
+                <!-- host ip -->
+                <a-form-item
+                :name="pasword" 
+                :rules="{
+                  required: true,
+                  message: 'Missing IP',
+                }">
                   <a-input
-                      v-model:value="host.ip"
-                      placeholder="please input host IP"
-                      style="width: 100%; "
+                      v-model:value="host.ip" placeholder="IP" style="width: 100%; "
                   />
                 </a-form-item>
+                <!-- host port -->
+                <a-form-item
+                :name="port" 
+                :rules="{
+                  required: true,
+                  message: 'Missing port',
+                }">
+                  <a-input
+                      v-model:value="host.port" placeholder="port" value=22 style="width: 100%; "
+                  />
+                </a-form-item>
+                <!-- password -->
+                <a-form-item
+                :name="password" 
+                :rules="{
+                  required: true,
+                  message: 'Missing Password',
+                }">
+                  <a-input
+                      v-model:value="host.password" placeholder="password" style="width: 100%; "
+                  />
+                </a-form-item>
+                <!-- 移除host -->
                 <MinusCircleOutlined
                     v-if="cluster.master.length > 1"
                     class="dynamic-delete-button"
                     :disabled="cluster.master.length === 1"
                     @click="removeMaster(host)"
                 />
+              </a-space>
+                
+
               </a-form-item>
-              <a-form-item v-bind="formItemLayoutWithOutLabel">
+                <a-form-item v-bind="formItemLayoutWithOutLabel">
                 <a-button type="dashed" style="width: 60%" @click="addMaster">
                   <PlusOutlined />
                   Add Host
                 </a-button>
               </a-form-item>
-            </a-form-item>
           </a-col>
         </a-row>
+
         <a-row :gutter="80">
           <a-col auto-size>
-            <a-form-item label="添加 slave 节点" >
+            <a-form-item label="添加工作节点" >
               <a-form-item>
 
               </a-form-item>
-              <a-form-item
+              <a-space
                   v-for="(host, index) in cluster.slaveNode"
-                  :key="host"
-                  v-bind="index === 0 ? formItemLayout : {}"
-                  :label="index === 0 ? 'host' : ''">
-                <a-form-item label="IP" name="IP">
+                  :key="host.id"
+                    style="display: flex; margin-bottom: 8px"
+                    align="baseline">
+                <!-- host ip -->
+                <a-form-item
+                :name="pasword" 
+                :rules="{
+                  required: true,
+                  message: 'Missing IP',
+                }">
                   <a-input
-                      v-model:value="host.ip"
-                      placeholder="please input host IP"
-                      style="width: 100%; "
+                      v-model:value="host.ip" placeholder="IP" style="width: 100%; "
                   />
                 </a-form-item>
+                <!-- host port -->
+                <a-form-item
+                :name="port" 
+                :rules="{
+                  required: true,
+                  message: 'Missing port',
+                }">
+                  <a-input
+                      v-model:value="host.port" placeholder="port" value=22 style="width: 100%; "
+                  />
+                </a-form-item>
+                <!-- password -->
+                <a-form-item
+                :name="password" 
+                :rules="{
+                  required: true,
+                  message: 'Missing Password',
+                }">
+                  <a-input
+                      v-model:value="host.password" placeholder="password" style="width: 100%; "
+                  />
+                </a-form-item>
+                <!-- 移除host -->
                 <MinusCircleOutlined
                     v-if="cluster.master.length > 1"
                     class="dynamic-delete-button"
                     :disabled="cluster.master.length === 1"
                     @click="removeSlave(host)"
                 />
+               
+              </a-space>
+                
+
               </a-form-item>
               <a-form-item v-bind="formItemLayoutWithOutLabel">
                 <a-button type="dashed" style="width: 60%" @click="addSlave">
@@ -146,9 +207,9 @@
                   Add Host
                 </a-button>
               </a-form-item>
-            </a-form-item>
           </a-col>
         </a-row>
+
         <a-row :gutter="16">
           <a-col auto-size>
             <a-form-item label="registry" name="registry">
@@ -171,12 +232,13 @@
 
 <script >
 
-import { SearchOutlined, ExclamationCircleOutlined, MinusCircleOutlined, PlusOutlined} from '@ant-design/icons-vue';
-import {defineComponent, reactive, ref} from 'vue';
+import { SearchOutlined, MinusCircleOutlined, PlusOutlined} from '@ant-design/icons-vue';
+import {defineComponent} from 'vue';
 import { queryCluster,createCluster } from '../api/cluster';
 export default defineComponent({
   components:{
-    SearchOutlined
+    SearchOutlined,
+    MinusCircleOutlined
   },
   methods:{
     clusterList(){
@@ -189,11 +251,6 @@ export default defineComponent({
         this.data = res.data
       })
     },
-    clusterCreate(){
-      createCluster(this.cluster).then((res) => {
-
-      })
-    },
     onSearch(){},
     // 表单校验
     rules() {},
@@ -203,7 +260,24 @@ export default defineComponent({
       this.visible = true
     },
     onSave(){
-
+      let param = {
+          name: this.cluster.name,
+          controlPlaneEndpoint: this.cluster.controlPlaneEndpoint,
+          master: this.cluster.master,
+          networkPlug: this.cluster.networkPlug,
+          podCidr: this.cluster.podCidr,
+          registry: this.cluster.registry,
+          serviceCidr: this.cluster.serviceCidr,
+          version: this.cluster.version,
+          workNodes: this.cluster.workNodes
+      }
+      createCluster(param).then((res) => {
+                if (res.data.code == 0) {
+                    message.success('保存成功')
+                    data.defaultSelectedIds = []
+                
+                }
+            })
     },
     onCancel(){},
     onDelete(){},
@@ -218,7 +292,7 @@ export default defineComponent({
         ip: "",
         password: "",
         port: 22}
-      );
+      ); 
     },
     removeSlave(item) {
       let index = this.cluster.slaveNode.indexOf(item);
@@ -309,11 +383,6 @@ export default defineComponent({
       ],
       collapsed: false,
       selectedKeys: 1,
-      host: {
-        ip: "",
-        password: "",
-        port: 22,
-      },
       cluster:{
         name: "",
         controlPlaneEndpoint:"",
@@ -324,19 +393,19 @@ export default defineComponent({
         version:"1.22.15",
         master:[{
           ip: "1.2.2.2",
-          password: "",
+          password: "test@123",
           port: 22,
         }],
         slaveNode:[{
           ip: "3.3.3.3",
-          password: "",
+          password: "test@123",
           port: 22,
         }],
       },
       title: "",
       operation: 1,
       visible: false,
-      disabled:false,
+      disabled: false,
       clusterFormRef: undefined,
       formItemLayout: {
         labelCol: {

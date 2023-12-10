@@ -17,3 +17,4 @@ export interface Cluster {
     master: Host[];
     slaveNode: Host[];
 }
+

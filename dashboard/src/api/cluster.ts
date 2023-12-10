@@ -14,6 +14,6 @@ export function createCluster(param){
     return request({
         url:"/cluster",
         method:"post",
-        params: param,
+        data: param,
     })
 }

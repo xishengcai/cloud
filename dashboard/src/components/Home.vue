@@ -17,6 +17,8 @@
     <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' }">
       <router-view></router-view>
     </a-layout-content>
+  </a-layout>
+  <a-layout>
 
   </a-layout>
 </template>
@@ -45,16 +47,12 @@ export default defineComponent({
       // 菜单选项
        menuItem: reactive([
          {
-           key: "/",
-           path: "/",
-           icon: DashboardOutlined,
-           name: "home"
-         },{
-        key: "cluster",
-        path: "/cluster",
-        icon: DashboardOutlined,
-        name: "集群"
-      }]),
+            key: "cluster",
+            path: "/cluster",
+            icon: DashboardOutlined, 
+            name: "集群"
+          }
+    ]),
       collapsed: ref<boolean>(false),
       selectedKeys: ref<string[]>(['1']),
     };

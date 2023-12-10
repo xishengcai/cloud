@@ -6,8 +6,12 @@ const routes = [
     {
         path: "/",
         component: Home,
-        redirect: "/cluster",
         children: [
+            {
+                path: "home",
+                name:"home",
+                component: Home,
+            },
             {
                 path: "cluster",
                 name:"cluster",

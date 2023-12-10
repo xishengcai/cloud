@@ -10,4 +10,15 @@ const request = axios.create({
     }
 })
 
+request.interceptors.response.use(response => {
+    console.log(response)
+    if (response.data.code != 0) {
+        message.error(response.data.resMsg)
+    }
+    return response;
+}, error => {
+    console.log(error)
+    return Promise.reject(error)
+})
+
 export default request;
