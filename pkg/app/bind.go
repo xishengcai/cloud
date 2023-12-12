@@ -26,7 +26,8 @@ func HandleOperator(ctx *gin.Context, o Operator, action Action) {
 func HandleParameterBindError(ctx *gin.Context, err error) {
 	klog.Errorf("参数绑定失败:%v", err)
 
-	ctx.JSON(http.StatusOK, Response{
+	ctx.JSON(http.StatusBadRequest, Response{
+		Code:   http.StatusBadRequest,
 		ResMsg: "参数解析失败: " + err.Error(),
 	})
 }

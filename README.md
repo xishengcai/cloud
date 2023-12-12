@@ -124,4 +124,13 @@ docker run -d -p 8080:8080 -v /user/bin/docker:/user/bin/docker \
 -v /opt/image_ftp:/opt/image_ftp \
 registry.cn-hangzhou.aliyuncs.com/xisheng/cloud:release-V1
 ```
+
+## response code
+```
+- 200, 表示操作成功
+- 400, 参数不符合
+- 201, 任务提交成功
+- 0, 业务处理失败
+
+```
 ![img.png](img.png)

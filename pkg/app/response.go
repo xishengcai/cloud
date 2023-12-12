@@ -1,19 +1,22 @@
 package app
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	CodeSuccess = 200
+	CodeError   = 400
+)
+
 type Response struct {
-	EventCode int         `json:"code"`
-	ResMsg    interface{} `json:"resMsg"`
-	Data      interface{} `json:"data"`
+	Code   int         `json:"code"`
+	ResMsg interface{} `json:"message"`
+	Data   interface{} `json:"data"`
 }
 
 type ListData struct {
-	Total int64       `json:"total"`
+	Total int64       `json:"total_record"`
 	Items interface{} `json:"items"`
 }
 
@@ -43,7 +46,7 @@ func NewServiceResultWitRawData(data interface{}, err error) *ServiceResult {
 	// check data. Avoid null-pointer exceptions
 	if data == nil {
 		data = &ListData{
-			Total: 0,
+			Total: CodeSuccess,
 			Items: []interface{}{},
 		}
 	}
@@ -81,28 +84,21 @@ func (s *ServiceResult) Error() error {
 	return s.err
 }
 
-func (s *ServiceResult) Check() error {
-	return s.err
-}
-
 func (s *ServiceResult) GetResponse() Response {
 	response := Response{Data: s.data}
 	if s.HasError() {
+		response.Code = CodeError
 		response.ResMsg = s.ResMsg()
-		response.EventCode = 1
 	} else {
+		response.Code = CodeSuccess
 		response.ResMsg = "操作成功"
 	}
 	return response
 }
 
-func HandleServiceResultWithCode(ctx *gin.Context, status int, rr ResultRaw) {
-	ctx.JSON(status, rr.GetResponse())
-}
-
 func HandleServiceResult(ctx *gin.Context, rr ResultRaw) {
 	res := rr.GetResponse()
-	ctx.JSON(http.StatusOK, res)
+	ctx.JSON(res.Code, res)
 }
 
 type InterfaceArray struct {
@@ -115,4 +111,8 @@ func (i InterfaceArray) convertToDataList() *ListData {
 		Total: int64(i.Total),
 		Items: i.Items,
 	}
+}
+
+func HandleServiceResultWithCode(ctx *gin.Context, status int, rr ResultRaw) {
+	ctx.JSON(status, rr.GetResponse())
 }
