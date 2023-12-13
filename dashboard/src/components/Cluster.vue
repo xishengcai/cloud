@@ -14,18 +14,13 @@
       </a-space>
     </div>
   </div>
-<a-table rowKey="id"
-         :columns="columns"
-         :data-source="data.data.items" :scroll="{ y: '59vh' }" class="ant-table-striped" >
-  <template #bodyCell="{ column, text, record }">
 
-  </template>
-</a-table>
+  <a-table :dataSource="resp.data.items" :columns="columns" />
 
-  <a-modal v-model:visible="visible" :title="title" @ok="onSave" @cancel="onCancel" cancelText="取消" okText="保存"
+  <a-modal v-model:open="visible" :title="title" @ok="onSave" @cancel="onCancel" cancelText="取消" okText="保存"
            width="800px" :centered="true">
     <div style="height: 55vh; overflow-y: scroll; padding: 0 15px;">
-      <a-form-model ref="clusterFormRef" :model="cluster" layout="vertical" name="cluster" :rules="rules">
+      <a-form ref="clusterFormRef" :model="cluster" layout="vertical" name="cluster" :rules="rules">
         <a-row :gutter="20">
           <a-col auto-size>
             <a-form-item label="名称" name="name">
@@ -94,7 +89,7 @@
                     align="baseline">
                 <!-- host ip -->
                 <a-form-item
-                :name="pasword" 
+                :name="pasword"
                 :rules="{
                   required: true,
                   message: 'Missing IP',
@@ -105,7 +100,7 @@
                 </a-form-item>
                 <!-- host port -->
                 <a-form-item
-                :name="port" 
+                :name="port"
                 :rules="{
                   required: true,
                   message: 'Missing port',
@@ -116,7 +111,7 @@
                 </a-form-item>
                 <!-- password -->
                 <a-form-item
-                :name="password" 
+                :name="password"
                 :rules="{
                   required: true,
                   message: 'Missing Password',
@@ -133,11 +128,11 @@
                     @click="removeMaster(host)"
                 />
               </a-space>
-                
+
 
               </a-form-item>
                 <a-form-item v-bind="formItemLayoutWithOutLabel">
-                <a-button type="dashed" style="width: 60%" @click="addMaster">
+                <a-button type="dashed" style="width: 60%"  @click="addMaster">
                   <PlusOutlined />
                   Add Host
                 </a-button>
@@ -158,7 +153,7 @@
                     align="baseline">
                 <!-- host ip -->
                 <a-form-item
-                :name="pasword" 
+                :name="pasword"
                 :rules="{
                   required: true,
                   message: 'Missing IP',
@@ -169,7 +164,7 @@
                 </a-form-item>
                 <!-- host port -->
                 <a-form-item
-                :name="port" 
+                :name="port"
                 :rules="{
                   required: true,
                   message: 'Missing port',
@@ -180,7 +175,7 @@
                 </a-form-item>
                 <!-- password -->
                 <a-form-item
-                :name="password" 
+                :name="password"
                 :rules="{
                   required: true,
                   message: 'Missing Password',
@@ -191,14 +186,13 @@
                 </a-form-item>
                 <!-- 移除host -->
                 <MinusCircleOutlined
-                    v-if="cluster.master.length > 1"
                     class="dynamic-delete-button"
                     :disabled="cluster.master.length === 1"
                     @click="removeSlave(host)"
                 />
-               
+
               </a-space>
-                
+
 
               </a-form-item>
               <a-form-item v-bind="formItemLayoutWithOutLabel">
@@ -225,7 +219,7 @@
             </a-form-item>
           </a-col>
         </a-row>
-      </a-form-model>
+      </a-form>
     </div>
   </a-modal>
 </template>
@@ -235,20 +229,21 @@
 import { SearchOutlined, MinusCircleOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import {defineComponent} from 'vue';
 import { queryCluster,createCluster } from '../api/cluster';
+import { message } from 'ant-design-vue';
 export default defineComponent({
   components:{
     SearchOutlined,
-    MinusCircleOutlined
+    MinusCircleOutlined,
+    PlusOutlined
   },
   methods:{
     clusterList(){
       let param = {
-        pageNum: 1,
-        pageSize: 10,
+        page: 1,
+        pageSize: 10
       }
       queryCluster(param).then((res) => {
-        console.log(res.data)
-        this.data = res.data
+        this.resp = res.data
       })
     },
     onSearch(){},
@@ -272,12 +267,14 @@ export default defineComponent({
           workNodes: this.cluster.workNodes
       }
       createCluster(param).then((res) => {
-                if (res.data.code == 0) {
-                    message.success('保存成功')
-                    data.defaultSelectedIds = []
-                
-                }
-            })
+        if (res.data.code == 201) {
+            message.success('保存成功')
+            this.data.defaultSelectedIds = []
+            this.clusterList()
+        }
+      })
+      // this.clusterFormRef.resetFields()
+      this.visible=false
     },
     onCancel(){},
     onDelete(){},
@@ -307,16 +304,25 @@ export default defineComponent({
         port: 22}
       );
     },
+    // 已选中的ID
+    onSelectedIds(selectedRowKeys){
+      this.data.clusterIDs = selectedRowKeys
+      if (this.data.clusterIDs.length !== 0) {
+        this.data.disabled.value = false
+      } else {
+        this.data.disabled.value = true
+      }
+    }
   },
   data() {
     return {
-      data: {
+      resp: {
         code: 0,
         data: {
           total: 0,
           items: [],
         },
-        resMsg: "",
+        message: "",
       },
       query: {
         name: "",
@@ -392,15 +398,11 @@ export default defineComponent({
         serviceCidr:"10.96.0.0/16",
         version:"1.22.15",
         master:[{
-          ip: "1.2.2.2",
+          ip: "",
           password: "test@123",
           port: 22,
         }],
-        slaveNode:[{
-          ip: "3.3.3.3",
-          password: "test@123",
-          port: 22,
-        }],
+        slaveNode:[],
       },
       title: "",
       operation: 1,
@@ -423,6 +425,7 @@ export default defineComponent({
           sm: { span: 20, offset: 4 },
         },
       },
+      defaultSelectedIds: [],
     };
   },
   mounted(){

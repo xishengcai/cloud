@@ -52,7 +52,7 @@ func (i *Cluster) Validate() error {
 // Run Install export to API interface
 func (i *Cluster) Run() app.ResultRaw {
 	i.ID = common.GetUUID()
-	_, err := mongoCollection.InsertOne(context.TODO(), i)
+	_, err := mongoCollection.InsertOne(context.TODO(), i.Cluster)
 	if err != nil {
 		return app.NewServiceResult(nil, err)
 	}

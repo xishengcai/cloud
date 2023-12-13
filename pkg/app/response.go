@@ -16,7 +16,7 @@ type Response struct {
 }
 
 type ListData struct {
-	Total int64       `json:"total_record"`
+	Total int64       `json:"total"`
 	Items interface{} `json:"items"`
 }
 

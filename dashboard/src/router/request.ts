@@ -12,8 +12,8 @@ const request = axios.create({
 
 request.interceptors.response.use(response => {
     console.log(response)
-    if (response.data.code != 0) {
-        message.error(response.data.resMsg)
+    if (response.data.code <200 || response.data.code >300) {
+        message.error(response.data.message)
     }
     return response;
 }, error => {
