@@ -56,7 +56,7 @@ func getJoinControllerNodeCommand(client *ssh2.Client, joinWorkNodeCommand strin
 	}
 	certificateKey := handCommandResult(result)
 
-	return joinWorkNodeCommand + " --control-plane --certificate-key  " + certificateKey, nil
+	return strings.TrimRight(joinWorkNodeCommand, "\n") + " --control-plane --certificate-key  " + certificateKey, nil
 
 }
 

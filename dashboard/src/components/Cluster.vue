@@ -89,7 +89,6 @@
                     align="baseline">
                 <!-- host ip -->
                 <a-form-item
-                :name="pasword"
                 :rules="{
                   required: true,
                   message: 'Missing IP',
@@ -100,10 +99,9 @@
                 </a-form-item>
                 <!-- host port -->
                 <a-form-item
-                :name="port"
                 :rules="{
                   required: true,
-                  message: 'Missing port',
+                  message: 'Missing Port',
                 }">
                   <a-input
                       v-model:value="host.port" placeholder="port" value=22 style="width: 100%; "
@@ -111,7 +109,6 @@
                 </a-form-item>
                 <!-- password -->
                 <a-form-item
-                :name="password"
                 :rules="{
                   required: true,
                   message: 'Missing Password',
@@ -134,7 +131,7 @@
                 <a-form-item v-bind="formItemLayoutWithOutLabel">
                 <a-button type="dashed" style="width: 60%"  @click="addMaster">
                   <PlusOutlined />
-                  Add Host
+                  Add Controller Node
                 </a-button>
               </a-form-item>
           </a-col>
@@ -147,13 +144,12 @@
 
               </a-form-item>
               <a-space
-                  v-for="(host, index) in cluster.slaveNode"
+                  v-for="(host, index) in cluster.workNodes"
                   :key="host.id"
                     style="display: flex; margin-bottom: 8px"
                     align="baseline">
                 <!-- host ip -->
                 <a-form-item
-                :name="pasword"
                 :rules="{
                   required: true,
                   message: 'Missing IP',
@@ -164,10 +160,9 @@
                 </a-form-item>
                 <!-- host port -->
                 <a-form-item
-                :name="port"
                 :rules="{
                   required: true,
-                  message: 'Missing port',
+                  message: 'Missing Port',
                 }">
                   <a-input
                       v-model:value="host.port" placeholder="port" value=22 style="width: 100%; "
@@ -175,7 +170,6 @@
                 </a-form-item>
                 <!-- password -->
                 <a-form-item
-                :name="password"
                 :rules="{
                   required: true,
                   message: 'Missing Password',
@@ -198,7 +192,7 @@
               <a-form-item v-bind="formItemLayoutWithOutLabel">
                 <a-button type="dashed" style="width: 60%" @click="addSlave">
                   <PlusOutlined />
-                  Add Host
+                  Add Work Node
                 </a-button>
               </a-form-item>
           </a-col>
@@ -264,7 +258,7 @@ export default defineComponent({
           registry: this.cluster.registry,
           serviceCidr: this.cluster.serviceCidr,
           version: this.cluster.version,
-          workNodes: this.cluster.workNodes
+          workNodess: this.cluster.workNodess
       }
       createCluster(param).then((res) => {
         if (res.data.code == 201) {
@@ -292,13 +286,13 @@ export default defineComponent({
       ); 
     },
     removeSlave(item) {
-      let index = this.cluster.slaveNode.indexOf(item);
+      let index = this.cluster.workNodes.indexOf(item);
       if (index !== -1) {
-        this.cluster.slaveNode.splice(index, 1);
+        this.cluster.workNodes.splice(index, 1);
       }
     },
     addSlave(){
-      this.cluster.slaveNode.push({
+      this.cluster.workNodes.push({
         ip: "",
         password: "",
         port: 22}
@@ -396,13 +390,19 @@ export default defineComponent({
         podCidr:"10.244.0.0/16",
         registry:"registry.aliyuncs.com/google_containers",
         serviceCidr:"10.96.0.0/16",
-        version:"1.22.15",
+        version:"1.23.5",
         master:[{
           ip: "",
           password: "test@123",
           port: 22,
         }],
-        slaveNode:[],
+        workNodes:[
+          {
+            ip: "",
+            password: "test@123",
+            port: 22,
+          }
+        ],
       },
       title: "",
       operation: 1,

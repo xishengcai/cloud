@@ -57,7 +57,7 @@ func (i *Cluster) Run() app.ResultRaw {
 		return app.NewServiceResult(nil, err)
 	}
 	jobChan <- i
-	klog.Infof("enqueue job: %v", i)
+	klog.Infof("enqueue job: %+v", &i)
 	return app.NewServiceResult(nil, nil)
 }
 

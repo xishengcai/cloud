@@ -1,6 +1,6 @@
 # function
 
-- [x] install high available k8s masters
+- [x] install high available k8s masters (需要自己实现vip的负载均衡)
 - [x] batch install slaves
 - [] web terminal
 - [x] dashboard(vue)
@@ -91,7 +91,6 @@
     "user": ""
   }
 }
-
 ```
 
 ## feature:
@@ -103,6 +102,10 @@
     - [x] 1.17.xxx
     - [x] 1.18.xxx
     - [x] 1.19.xxx
+    - [x] 1.20.xxx
+    - [] 1.21.xxx
+    - [x] 1.22.xxx
+    - [x] 1.23.xxx
   
 - [x] upgrade k8s
     - [x] 1.17 ---> 1.18.x
@@ -110,19 +113,17 @@
     - [x] 1.19 ---> 1.20.x
     - [x] 1.20.x --> 1.21.0 升级 (特殊)
     - [x] 1.21.x --> 1.22.x 升级 
+    - [x] 1.22.x --> 1.23.x 升级 
   
 ## local start
-- go run main.go
-- cd front && ng serve --open
-- docker run 
 ```bash
+docker run -d --restart=always -p 27017:27017 --name mongodb -v /var/lib/mongo:/data/mongodb \
+-e MONGO_INITDB_ROOT_PASSWORD=123456 -e MONGO_INITDB_DATABASE=admin -e MONGO_INITDB_ROOT_USERNAME=root \
+-d mongo:latest
 
-docker run -d -p 8080:8080 -v /user/bin/docker:/user/bin/docker \
--v /etc/docker:/etc/docker \
--v /data/docker:/data/docker \
--v /var/run/docker.sock:/var/run/docker.sock \
--v /opt/image_ftp:/opt/image_ftp \
-registry.cn-hangzhou.aliyuncs.com/xisheng/cloud:release-V1
+go run main.go
+
+cd dashboard && npm run dev
 ```
 
 ## response code

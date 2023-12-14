@@ -109,12 +109,21 @@ func (i *JoinNodes) join() {
 				klog.Error(err)
 				return
 			}
+
+			ctx, cancel := context.WithTimeout(context.TODO(), installDockerTimeOut)
+			defer cancel()
+			err = docker.InstallDocker(ctx, client)
+			if err != nil {
+				klog.Error(err)
+				return
+			}
+
 			err = joinNode(client, i.Version, i.JoinControllerCommand)
 			if err != nil {
 				klog.Error(err)
 				return
 			}
-			klog.Infof("node: %s join kubernetes success", host.IP)
+			klog.Infof("controller : %s join kubernetes success", host.IP)
 		}(node)
 	}
 }
