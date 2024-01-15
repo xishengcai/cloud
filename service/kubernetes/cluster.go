@@ -30,9 +30,9 @@ var (
 	clusterFileMap       = map[string]string{
 		installKubeletTpl:         "/root/install_kubeadm.sh",
 		installK8sMasterScriptTpl: "/root/install_k8s_master.sh",
-		//upgradeKernelShell:        "/root/upgrade_kernel.sh",
-		ciliumLinuxTpl:   "/root/cilium_linux.sh",
-		installK8sPlugin: "/root/install_k8s_plugin.sh",
+		upgradeKernelShell:        "/root/upgrade_kernel.sh",
+		ciliumLinuxTpl:            "/root/cilium_linux.sh",
+		installK8sPlugin:          "/root/install_k8s_plugin.sh",
 	}
 )
 

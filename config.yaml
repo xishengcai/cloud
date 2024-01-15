@@ -10,7 +10,7 @@ mysql:
   username: root
   host: "localhost:3306"
   password: 123456
-  dbName: drs
+  dbName: cloud
   charset: utf8mb4
   parseTime: true
   maxIdleConnections: 10

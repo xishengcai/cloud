@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
-installPlugin() {
+installMetrics() {
   # https://artifacthub.io/packages/helm/metrics-server/metrics-server
   helm upgrade --install metrics-server gt/metrics-server --version 3.11.0 \
   --set --image.repository=xisheng/metrics-server \
   --set image.tag=v0.6.4 -n kube-system
+}
 
+installDashboard(){
   #
   helm upgrade --install dashboard gt/kubernetes-dashboard --version 6.0.8 -n kube-system
 cat <<EOF | kubectl apply -f -
@@ -34,7 +36,12 @@ EOF
   '
 }
 
+installOpenebs(){
+  helm upgrade --install  openebs --namespace openebs gt/openebs --create-namespace
+}
+
 main(){
-  installPlugin
+  installMetrics
+  installDashboard
 }
 main
