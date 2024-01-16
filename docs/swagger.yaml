@@ -6,8 +6,76 @@ definitions:
         type: integer
       data:
         type: object
-      resMsg:
+      message:
         type: object
+    type: object
+  images.Image:
+    properties:
+      name:
+        default: nginx
+        type: string
+      version:
+        default: latest
+        type: string
+    type: object
+  images.Local:
+    properties:
+      path:
+        default: /data/images
+        type: string
+    type: object
+  images.Pull:
+    properties:
+      local:
+        $ref: '#/definitions/images.Local'
+        type: object
+      registry:
+        $ref: '#/definitions/images.Registry'
+        type: object
+      remoteHost:
+        $ref: '#/definitions/images.RemoteHost'
+        type: object
+      source:
+        $ref: '#/definitions/images.Repo'
+        type: object
+      type:
+        default: local
+        type: string
+    type: object
+  images.Registry:
+    properties:
+      address:
+        type: string
+    type: object
+  images.RemoteHost:
+    properties:
+      ip:
+        type: string
+      password:
+        type: string
+      port:
+        default: 22
+        type: integer
+      user:
+        default: root
+        type: string
+    type: object
+  images.Repo:
+    properties:
+      addr:
+        default: docker.io
+        type: string
+      images:
+        items:
+          $ref: '#/definitions/images.Image'
+        type: array
+      org:
+        default: library
+        type: string
+      password:
+        type: string
+      user:
+        type: string
     type: object
   kubernetes.JoinNodes:
     properties:
@@ -207,6 +275,43 @@ paths:
       summary: upgrade k8s
       tags:
       - k8s cluster
+  /v1/images/info:
+    get:
+      consumes:
+      - application/json
+      description: image pull info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: image
+      tags:
+      - image
+  /v1/images/pull:
+    post:
+      consumes:
+      - application/json
+      description: image push to oss
+      parameters:
+      - description: pull Image, then push to OSS
+        in: body
+        name: cluster
+        required: true
+        schema:
+          $ref: '#/definitions/images.Pull'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: image push to oss
+      tags:
+      - image
   /v1/proxy:
     post:
       consumes:

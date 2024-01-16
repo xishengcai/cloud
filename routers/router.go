@@ -13,6 +13,7 @@ import (
 	_ "github.com/xishengcai/cloud/docs"
 	"github.com/xishengcai/cloud/pkg/middleware"
 	"github.com/xishengcai/cloud/routers/api/cluster"
+	"github.com/xishengcai/cloud/routers/api/image"
 	"github.com/xishengcai/cloud/routers/api/proxy"
 )
 
@@ -111,6 +112,7 @@ func InitRouter() *gin.Engine {
 	//baseRoute.Use(Auth())
 	cluster.Register(baseRoute)
 	proxy.Register(baseRoute)
+	image.Register(baseRoute)
 	agg := r.Group("/")
 	agg.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

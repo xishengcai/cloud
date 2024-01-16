@@ -20,12 +20,13 @@ var (
 )
 
 type config struct {
-	Title   string  `yaml:"title"`
-	Version string  `yaml:"version"`
-	RunMode string  `yaml:"runMode"`
-	Mysql   mysql   `yaml:"mysql"`
-	Mongodb mongodb `yaml:"mongodb"`
-	Web     web     `yaml:"web"`
+	Title    string   `yaml:"title"`
+	Version  string   `yaml:"version"`
+	RunMode  string   `yaml:"runMode"`
+	Mysql    mysql    `yaml:"mysql"`
+	Mongodb  mongodb  `yaml:"mongodb"`
+	Web      web      `yaml:"web"`
+	AliCloud aliCloud `yaml:"aliCloud"`
 }
 
 type web struct {

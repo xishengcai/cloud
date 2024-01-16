@@ -2,9 +2,10 @@ title: cloud
 version: "1.0"
 runMode: debug
 web:
-  port: 80
+  port: 81
   readTimeout:  60
   writeTimeout: 60
+
 mysql:
   dbType: mysql
   username: root

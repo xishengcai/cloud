@@ -21,7 +21,11 @@ yum-config-manager \
 yum clean packages
 #查看docker-ce版本并且安装
 yum list docker-ce --showduplicates | sort -r
-yum install -y docker-ce-cli-20.10.24 docker-ce-20.10.24 containerd.io docker-compose-plugin docker-ce-rootless-extras-20.10.24
+yum install -y docker-ce-cli-20.10.24 docker-ce-20.10.24 \
+containerd.io \
+docker-compose-plugin \
+docker-ce-rootless-extras-20.10.24 \
+--allowerasing
 
 
 echo "config docker daemon"

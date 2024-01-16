@@ -151,6 +151,63 @@
                 }
             }
         },
+        "/v1/images/info": {
+            "get": {
+                "description": "image pull info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "image"
+                ],
+                "summary": "image",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/images/pull": {
+            "post": {
+                "description": "image push to oss",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "image"
+                ],
+                "summary": "image push to oss",
+                "parameters": [
+                    {
+                        "description": "pull Image, then push to OSS",
+                        "name": "cluster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/images.Pull"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/proxy": {
             "post": {
                 "description": "install proxy",
@@ -196,8 +253,107 @@
                 "data": {
                     "type": "object"
                 },
-                "resMsg": {
+                "message": {
                     "type": "object"
+                }
+            }
+        },
+        "images.Image": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "default": "nginx"
+                },
+                "version": {
+                    "type": "string",
+                    "default": "latest"
+                }
+            }
+        },
+        "images.Local": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "default": "/data/images"
+                }
+            }
+        },
+        "images.Pull": {
+            "type": "object",
+            "properties": {
+                "local": {
+                    "type": "object",
+                    "$ref": "#/definitions/images.Local"
+                },
+                "registry": {
+                    "type": "object",
+                    "$ref": "#/definitions/images.Registry"
+                },
+                "remoteHost": {
+                    "type": "object",
+                    "$ref": "#/definitions/images.RemoteHost"
+                },
+                "source": {
+                    "type": "object",
+                    "$ref": "#/definitions/images.Repo"
+                },
+                "type": {
+                    "type": "string",
+                    "default": "local"
+                }
+            }
+        },
+        "images.Registry": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                }
+            }
+        },
+        "images.RemoteHost": {
+            "type": "object",
+            "properties": {
+                "ip": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer",
+                    "default": 22
+                },
+                "user": {
+                    "type": "string",
+                    "default": "root"
+                }
+            }
+        },
+        "images.Repo": {
+            "type": "object",
+            "properties": {
+                "addr": {
+                    "type": "string",
+                    "default": "docker.io"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/images.Image"
+                    }
+                },
+                "org": {
+                    "type": "string",
+                    "default": "library"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "user": {
+                    "type": "string"
                 }
             }
         },
