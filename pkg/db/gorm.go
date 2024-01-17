@@ -17,7 +17,8 @@ import (
 
 func InitMysql() {
 	m := setting.Config.Mysql
-	conn, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=%t&loc=Local",
+	conn, err := sql.Open("mysql"+
+		"", fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=%t&loc=Local",
 		m.Username,
 		m.Password,
 		m.Host,
