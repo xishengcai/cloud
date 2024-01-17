@@ -2,6 +2,10 @@ package images
 
 import (
 	"fmt"
+	"log"
+	"os/exec"
+
+	"k8s.io/klog/v2"
 
 	"github.com/xishengcai/cloud/models"
 	"github.com/xishengcai/cloud/pkg/ossutil"
@@ -9,7 +13,7 @@ import (
 )
 
 type target interface {
-	push() error
+	push(imageCache ImageCache) error
 	url(tarName string) string
 }
 
@@ -25,7 +29,7 @@ func newOssTarget(dir string) OssTarget {
 	}
 }
 
-func (o OssTarget) push() error {
+func (o OssTarget) push(imageCache ImageCache) error {
 	return nil
 }
 func (o OssTarget) url(tarName string) string {
@@ -40,7 +44,7 @@ type Registry struct {
 	Address string `json:"address"`
 }
 
-func (r Registry) push() error {
+func (r Registry) push(imageCache ImageCache) error {
 	return nil
 }
 
@@ -52,7 +56,7 @@ type RemoteHost struct {
 	models.Host
 }
 
-func (r RemoteHost) push() error {
+func (r RemoteHost) push(imageCache ImageCache) error {
 	return nil
 }
 
@@ -61,10 +65,17 @@ func (r RemoteHost) url(tarName string) string {
 }
 
 type Local struct {
-	Path string `json:"path" default:"/data/images"`
+	SavePath string `json:"path" default:"/data/images"`
 }
 
-func (l Local) push() error {
+func (l Local) push(imageCache ImageCache) error {
+	cmd := exec.Command("cp", imageCache.getTemplatePath(), l.SavePath+"/"+imageCache.TarPackage)
+	err := cmd.Run()
+	if err != nil {
+		log.Fatalf("Failed to cp image tar: %v", err)
+	}
+	klog.Infof("push image to local path: /data/images/%s")
+
 	return nil
 }
 
@@ -79,8 +90,10 @@ func NewTarget(p *Pull) target {
 		return p.Registry
 	case PushOSS:
 		return newOssTarget("/abc")
+	case PushLocal:
+		return p.Local
 	default:
-		return Local{}
+		return nil
 	}
 }
 

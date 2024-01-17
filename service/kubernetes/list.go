@@ -10,8 +10,7 @@ import (
 )
 
 var (
-	//mongoCollection = db.CreateMongoCollection("admin", "cluster")
-	mongoCollection = db.NewSqlite3()
+	mongoCollection = db.CreateMongoCollection("admin", "cluster")
 )
 
 type List struct {

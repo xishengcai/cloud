@@ -17,7 +17,7 @@ var (
 	DefaultMongoDatabase *mongo.Database
 )
 
-func InitMongo() {
+func init() {
 	cfg := setting.Config.Mongodb
 	connectCtx, connectCancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer connectCancel()
